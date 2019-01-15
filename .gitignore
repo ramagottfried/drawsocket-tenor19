@@ -1,8 +1,8 @@
 .DS_Store
-.log
-.aux
-.bbl
-.gz
-.pdf
-.ai
+*.log
+*.aux
+*.bbl
+*.gz
+*.pdf
+*.ai
 /old
