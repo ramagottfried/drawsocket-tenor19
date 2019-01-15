@@ -47,7 +47,7 @@
 
 
 \section{drawsocket}\label{sec:drawsocket}
-The \drawsocket design approach is based on the ``o.io'' paradigm developed at the University of California, Berkeley's Center for New Music and Technology (CNMAT), which uses the OpenSoundControl (OSC) encoding~\cite{wright:osc} to create a uniform user application programing interface (API) by ``wrapping'' vendor- and protocol- specific details in an interoperable API syntax.~\cite{freed2014io, maccallum2015dynamic}
+The \drawsocket design approach is based on the ``o.io'' paradigm developed at the University of California, Berkeley's Center for New Music and Technology (CNMAT), which uses the OpenSoundControl (OSC) encoding~\cite{wright:osc} to create a uniform user application programing interface (API) by ``wrapping'' vendor- and protocol- specific details in an interoperable API syntax~\cite{freed2014io, maccallum2015dynamic}.
 In this way, the \drawsocket system aims to be an ``o.io'' wrapper for web-browser display and interaction, providing an OSC API for manipulating the display building blocks of Scalable Vector Graphics (SVG)\cite{world2000scalable}, Cascading Style Sheets (CSS)~\cite{css}, HyperText Markup Language (HTML)~\cite{Faulkner:16:H}, and a curated collection of client-based JavaScript libraries for animation and sound production.
 
 \begin{figure*}[]
@@ -116,7 +116,6 @@ This provides a mechanism for preloading a set of drawing commands to a OSC pref
 \medskip
 \noindent
 \textbf{Client return messages.}
-%clock sync, user interaction messages to Max
 WebSocket connection is bidirectional, and is used to handle messages from the client: responding to clock synchronization requests, client requests for initialization, and forwarding user interaction information to Max.
 
 \medskip
@@ -131,34 +130,35 @@ Running inside a web-browser, the client-side component of the \drawsocket syste
 \medskip
 \noindent
 \textbf{Web-browser.}  
-Currently the system targets Safari and Chrome. Firefox support is currently out of sync with the other browsers, but will be supported. Other browsers will most likely work, but are not currently being tested.
+Currently the system targets Safari and Chrome. 
+Firefox support is currently out of sync with the other browsers, but will be supported. Other browsers will most likely work, but are not currently being tested.
 
 \medskip
 \noindent
 \textbf{Libraries.}
 On the client-side, we are currently using the following Javascript libraries, all available from NPM:
 
-\textbf{d3.js}~\cite{d3}, a well regarded SVG library for information visualization. \footnote{We are now mainly using d3.js for DOM node creation and manipulation, since Max serves as the central data model handler in the \drawsocket system. So, eventually it is likely that we will remove the d3.js dependency, to streamline the codebase. However for the time being d3's utilitity functions are convenient for rapid development, and appear to be performant enough.}
+\textbf{D3.js}~\cite{d3}, a well regarded SVG library for information visualization\footnote{We are now mainly using d3.js for DOM node creation and manipulation, since Max serves as the central data model handler in the \drawsocket system. So, eventually it is likely that we will remove the d3.js dependency, to streamline the codebase. However for the time being d3's utilitity functions are convenient for rapid development, and appear to be performant enough.}.
 
-\textbf{pdf.js}~\cite{pdfjs}, a PDF viewer library developed by Mozilla, providing support for PDF file reading, viewing and page turning.
+\textbf{PDF.js}~\cite{pdfjs}, a PDF viewer library developed by Mozilla, providing support for PDF file reading, viewing and page turning.
 
-\textbf{tone.js}~\cite{mann2015interactive}, a web-audio library by Yotam Mann. Currently, \drawsocket uses tone.js to provide basic soundfile playback functionality, this may be expanded in the future.
+\textbf{Tone.js}~\cite{mann2015interactive}, a web-audio library by Yotam Mann. Currently, \drawsocket uses tone.js to provide basic soundfile playback functionality, this may be expanded in the future.
 
-\textbf{timesync.js}~\cite{timesync}, \drawsocket uses the timesync.js clock synchronization library to synchronize animations, and provide a mechanism for timed commands.
+\textbf{Timesync.js}~\cite{timesync}, \drawsocket uses the timesync.js clock synchronization library to synchronize animations, and provide a mechanism for timed commands.
 
  \textbf{TweenMax} and \textbf{TimelineMax}, from the GreenSock Animation Platform (GSAP)~\cite{gsap}, a high-performance system for JS and CSS animation.
 
 \medskip
 \noindent
 \textbf{Layers.}
-The central layout setup for the browser display one HTML \texttt{<div>} node, containing and \texttt{<svg>} element, as shown in figure~\ref{fig:drawsocket-layers}.
+The central layout setup for the browser display one HTML  \textless div\textgreater\ node, containing and \textless svg\textgreater\ element, as shown in figure~\ref{fig:drawsocket-layers}.
 
-Within the SVG element there are three drawing layers, wrapped in SVG group \texttt{<g>} tags.
+Within the SVG element there are three drawing layers, wrapped in SVG group \textless g\textgreater\ tags.
 SVG nodes are drawn in order from top to bottom, and so we use this to provide three layers of drawing contexts referred to in the message API as \textit{back}, \textit{main}, and \textit{overlay}.
 
-The \texttt{<div>} containing the SVG element, is primarily just a place holder, however it may also be used to change the background color, or other top level display attributes.
+The \textless div\textgreater containing the SVG element, is primarily just a place holder, however it may also be used to change the background color, or other top level display attributes.
 
-The top layer of the HTML page is the \textit{forms} \texttt{<div>}, which is used to provide access to user input HTML form element.
+The top layer of the HTML page is the \textit{forms} \textless div\textgreater\ tag, which is used to provide access to user input HTML form element.
 
 \begin{figure*}[]
 \centering
@@ -172,9 +172,9 @@ The top layer of the HTML page is the \textit{forms} \texttt{<div>}, which is us
 \textbf{Client-side Script.} 
 The main the client-side script is called \textit{drawsocket-client.js} and handles the main drawing and command processing logic of the system.
 
-On load, the script first requests a new WebSocket connection to the server, using the browser's URL as the OSC prefix as the WebSocket identifier. On successful WebSocket connection, the script begins the clock synchronization process which runs in the background on the client system, requesting new clock readings from the server at regular intervals \footnote{Currently, the script is configured to check every 5 seconds, but this may change depending on performance on a larger scale system}. Once the initial clock synchronization is completed, the script sends an state initialization request to the server, to which the server responds with a sequence of commands corresponding to the current state of the given OSC prefix.
+On load, the script first requests a new WebSocket connection to the server, using the browser's URL as the OSC prefix as the WebSocket identifier. On successful WebSocket connection, the script begins the clock synchronization process which runs in the background on the client system, requesting new clock readings from the server at regular intervals\footnote{Currently, the script is configured to check every 5 seconds, but this may change depending on performance on a larger scale system}. Once the initial clock synchronization is completed, the script sends an state initialization request to the server, to which the server responds with a sequence of commands corresponding to the current state of the given OSC prefix.
 
-The central command processing is performed in the \linebreak\texttt{processCmdObj} function, which parses an array of time-tagged command objects, and executes the corresponding graphic and sound manipulations in the browser. The \linebreak\texttt{processCmdObj} function expects one or more objects with a \textit{key}, \textit{val}, and \textit{timetag} key-value pairs:
+The central command processing is performed in the \textit{processCmdObj} function, which parses an array of time-tagged command objects, and executes the corresponding graphic and sound manipulations in the browser. The \textit{processCmdObj} function expects one or more objects with a \textit{key}, \textit{val}, and \textit{timetag} key-value pairs:
 
 \begin{lstlisting}[
   mathescape,
@@ -195,7 +195,7 @@ Generally, these objects are formatted in the Node.js server from the API comman
 
 To install, users download the hfmt.drawsocket repository and place it in Max's Packages folder. Once installed, users can instantiate the \drawsocket system by placing the hfmt.drawsocket object in a Max patch.
 
-The dependency NPM libraries are not distributed with the package, so on first loading hfmt.drawsocket, you must first send the object the \texttt{script NPM install} message, which asks NPM to download all of the dependencies listed in the node project's \textit{packages.json} file.\footnote{The node project is located in the package's /code/node folder, and includes all scripts, and configuration files.}
+The dependency NPM libraries are not distributed with the package, so on first loading hfmt.drawsocket, you must first send the object the \textit{script NPM install} message, which asks NPM to download all of the dependencies listed in the node project's \textit{packages.json} file.\footnote{The node project is located in the package's /code/node folder, and includes all scripts, and configuration files.}
 
 \medskip
 \noindent
