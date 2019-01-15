@@ -1,0 +1,53 @@
+
+\section{Introduction}\label{sec:intro}
+
+%why did we need to make this system?
+%introduce the St. Pauli project
+%ensemble performance 
+%
+%
+%Definition of Situative Performance
+%
+%Quintet.net and the European Bridges Ensemble
+
+In a presentation on his piece Music for a Wilderness Lake (1979), R. Murray Schafer referred to it as a ``music for a place (personal communication).'' It is music which greatly depends on the topology on the environment it is performed in. While sporadic cases have already existed in the 1800's and probably even before (in his Memos Charles Ives tells the story of his father experimenting with marching bands walking towards each other and playing different tunes), it became more of a practice during the second part of the 20th century. Examples include Musik f\"ur ein Haus (Stockhausen, 1968), Eine Brise / Fl\"uchtige Aktion f\"ur 111 Fahrr\"ader (Kagel, 1996), music by Alvin Curran...
+
+One of the difficulties of such a practice is maintaining synchronicity, as the participants either act on their own or execute scores with little coordination with the other participants due to lack of visual and auditory cues from a central agent / conductor. Such difficulties are amplified if the location of the performance is a virtual one such as in networked music performance (NMP). Recent developments in digital technologies have leveraged some if not all of these difficulties by providing audiovisual tools working in real-time. They are either capable of creating a shared space by low-latency streaming or the exchange of control messages. While audio/video streaming has yielded excellent results since the early 2000s (e.g. JackTrip~\cite{caceres2010jacktrip}), systems that feature music notation in networked environments have been rare and only become more widespread since about 2010. Quintet.net~\cite{hajdu2005quintet} developed by Georg Hajdu is an earlier example of software in which the interaction of musicians is facilitated by a visual notation layer (...).
+
+``Situative scoring'' is a term coined by Sandeep Bhagwati~\cite{bhagwati2017vexations} describing scores that are defined as scores that deliver time- and context-sensitive score information to musicians at the moment when it becomes relevant.... Lately, reactive, interactive, locative scores have added new options to situative scoring.'' (...)
+
+The Old Elbe Tunnel is a remarkable landmark in the heart of the Hamburg port. Completed in 1911, it was considered a technological marvel at the time, connecting two neighborhoods below the Elbe river. Featuring two tubes for pedestrians, cyclists and automobiles which are being carried down / up by sizeable lifts to / from the bottom 24m beneath the surface, it is also an extraordinary place for performances. Its Jugendstil half cylinders form a resonant body in which the sound of a single instrument carries over large distances with relatively little decay (footnote: in an experiment featuring a violin playing scales at mezzo forte dynamics, it could be heard at 50m distance as if it was still be played right next to the observer).
+
+The Stage\_2.0 grant within the Innovative Hochschule initiative of the Federal Ministry of Education and Research in Germany (BMBF) has finally laid the financial foundation for a musical project in the tunnel. The idea is to connect a large number of musicians via a network of connected devices delivering scores on time. We went through a number of scenarios until zooming in on the most practical solution: As the total circular length of the tunnel is about 860 m and an ideal spacing of individual musicians was determined to be between 5 to 6 m, it was a most welcome finding that dividing 864 by 6 yielded 144, a highly divisible number with technical and compositional repercussions. For instance, this number allowed us to define identical sub-groups consisting of 12 musicians each. (Table of instruments) or to place 8 access points at regular distances between musicians (Figure). An older, safer idea consisting of tablet computers connected to a wired Ethernet network was abandoned in favor of a Wi-Fi network as it would have required anywhere between 2.5 and 5 km of cables depending on the number of switches involved. 
+We finally decided on using iPads as the on-time delivery of scores was to be done via browsers, and \textcolor{red}{Apple and its authorized resellers seemed most in tune with our needs [rephrase]. }
+Another serendipitous finding was that when Rama Gottfried joined the Stage\_2.0 project in 2018, he had already been working on a node.js-based system for the Berlin Ensemble Mosaik and possessed the expertise to take on a project that would also take advantage of Cycling ’74’s recent effort to integrate node.js into their Max multimedia authoring environment.
+
+
+% \innovativ
+
+
+\section{Foundations} \label{sec:foundations} 
+%
+%Conected prior work
+%  
+%Maxscore \cite{didkovsky2008maxscore}
+%
+%Max Mira system
+%
+%Symbolist (related to SVG/OSC work) \cite{gottfried2018symbolist, gottfried2015svg}
+
+
+%node.js prototypes used for ensemble mosaik
+
+A small number of software solutions are capable delivering scores in a networked environment, most notably InScore~\cite{fober2013programming}, bach~\cite{agostini2015max} and MaxScore~\cite{didkovsky2008maxscore}. MaxScore emerged from the ongoing effort to provide a robust notation layer to the Quintet.net multimedia performance environment and has first been used in 2007 in a performance at the Budapest Kunsthalle. MaxScore went through several iterations and incarnations (e.g. as LiveScore bringing standard music notation to the Ableton Live DAW).
+MaxScore is ...
+
+In a 2018 TENOR paper, Hajdu and Didkovsky described how scores generated by MaxScore could be displayed in real-time on iPads and browsers via the Max Mira and MiraWeb systems (footnote: reference to Carey and Hajdu: NetCanvas). This approach relies on the Max fpic object which can be mirrored on handheld devices. Having to create a PNG of the entire score each time it changes and using Mira’s and MiraWeb’s TCP and/or web socket connections for upload seemed like crutch and mandated a more elegant approach harnessing the power of modern browser with their JavaScript/HTML 5 implementations. 
+
+...
+
+Our efforts thus led to the development of hfmt.drawsocket, which is a robust node.js- based solution allowing on-time delivery of scores that be scaled and animated without loss of quality (due to the use of vector graphics).
+
+
+
+
