@@ -191,7 +191,10 @@ Generally, these objects are formatted in the Node.js server from the API comman
 
 %%%%%%%% User Setup
 \section{Drawsocket User Setup}\label{sec:setup}
-\drawsocket is distributed as a Max Package, currently hosted on GitHub at the following url: \url{https://github.com/ramagottfried/hfmt-drawsocket}, and is designed for use with MaxScore, and CNMAT's Odot Library.
+\drawsocket is designed for use in Max, with MaxScore and CNMAT's Odot Library.
+The software is distributed as a Max Package called ``hfmt.drawsocket'', currently hosted on GitHub at the following url:
+
+\textit{https://github.com/ramagottfried/hfmt-drawsocket}
 
 To install, users download the hfmt.drawsocket repository and place it in Max's Packages folder. Once installed, users can instantiate the \drawsocket system by placing the hfmt.drawsocket object in a Max patch.
 
@@ -201,8 +204,7 @@ The dependency NPM libraries are not distributed with the package, so on first l
 \noindent
 \textbf{Setting the public folder.}  As described above, by default the \drawsocket server responds to HTTP URL requests with a default HTML page. Custom HTML pages, and/or other types of assets can also be served to the client from a static root public folder. 
 
-The public root folder can be set in Max, by supplying the relative path to the user's Max patch as an argument to the hfmt.drawsocket object.
-Note that the Max patch must be saved to disk before it will have a valid folder path.
+The public root folder can be set in Max, by supplying the relative path to the user's Max patch\footnote{Note that the Max patch must be saved to disk before it will have a valid folder path.} as an argument to the hfmt.drawsocket object.
 This system allows users to organize their project in a mobile way, easily moved or installed on a new system.
 
 Within the hfmt.drawsocket abstraction there is a helper script called \textit{startscript.js} which retrieves the user patcher's folder path, and passes the path configuration as an argument to the node.script object start message. 
@@ -213,17 +215,19 @@ In larger projects it is often convenient to sort assets into separate folders f
 
 %%%%%%%% API
 \section{Drawsocket API}\label{sec:api}
-
 The \drawsocket API has developed organically as features are gradually added to the system.
-The API message syntax was designed initially in keeping with conventional \textit{message passing} approach~\cite{mitchell2003concepts} used extensively in the Max environment, so that drawing commands could easily connect to commands used for other Max drawing objects such as LCD, or jit.gl.sketch.
-However, as more features were added, some complications arose in regard to the sequence ordering, and as a result the object-array API was developed (discussed below in section~\ref{sec:objstyle}).
-For convenience both message approaches will be maintained for the time being, but eventually the Max style messages may be removed from the client script, and added to the hfmt.drawsocket Max abstraction.
-We will present both approaches here.
+The API was designed initially in keeping with the conventional ``message'' format used in the Max environment, so that drawing commands could easily connect to commands used for other Max drawing objects such as LCD, or jit.gl.sketch.
+A Max message is structured as an array, beginning with a selector string, followed by a list of values, which is interpreted by the receiver based on a known schema.
+However, as more features were added, some complications arose in regard to the sequence ordering, and as a result an alternative object-oriented API was developed, which makes use of a schema-less key/value approach that has proven more flexible for the \drawsocket system (discussed below in section~\ref{sec:objstyle}).
+The API is still under development, and at the moment, we are transitioning the system to the object-oriented approach, which has several important advantages described below. 
+The list-oriented approach is currently still functional, but deprecated.
+
+Note that in the discussion below, we use the term \textit{message} as a general purpose term for communication via message events, which could be in different formats (OSC messages, Max messages, JSON objects sent as messages, etc.).
 
 \medskip
 \noindent
 \textbf{OSC prefix routing.}  
-All messages, are prefixed by the client's OSC prefix, which is used to route command messages to the appropriate clients. 
+All messages sent from the server, are prefixed by the client's OSC prefix, which is used to route messages to the appropriate clients. 
 Multiple clients may be logged into the same URL, in which case they would all receive the same drawing commands. For example if you had a group of violins all playing the same part you could have them log into the URL \textit{http://server.ip.address:port/violin1}.
 Then to send messages to the violin 1 section, you would prefix the drawing message with \textit{/violin1}.
 
@@ -436,8 +440,8 @@ Following the \textit{/css} definitions, a new SVG circle object is created and 
 
 
 \subsection{SVG layer drawing contexts}\label{sec:contexts}
-As shown in figure~\ref{fig:drawsocket-layers}, there are three main drawing layers in \drawsocket, which are referred to in from the API as \textit{back}, \textit{main}, and \textit{overlay}. .
-.. mention something about layer order?
+As shown in figure~\ref{fig:drawsocket-layers}, there are three main drawing layers in \drawsocket, which are referred to in from the API as \textit{back}, \textit{main}, and \textit{overlay}, and layered one on top of the other in this sequence.
+Since the layers are fixed in their rendering order, these three drawing contexts can be used to manage child elements in groups, for example a staff with a clef might be on the ``back'' layer, with the current notes above it on the ``main'' layer, and then a moving cursor display on the ``overlay'' layer.
 
 By default all new elements are added to the ``main'' layer, unless otherwise stated. The drawing layer can be specified in two ways. Using the list style API, the drawing context is set between the node id and the drawing command, whereas in the object API the context is set as the hierarchical parent of the object array. 
 For example, the following two commands produce the identical SVG line named ``foo'', drawn to the ``back'' layer.
@@ -464,7 +468,9 @@ This is a useful approach for reducing the amount of data that needs to be sent 
 \medskip
 \noindent
 \textbf{Referencing SVG definitions.} 
-There are two node types in the SVG specification which allow the user to create prototypes of graphic elements, \textit{defs} and \textit{symbol}, which can be applied like a stamp via \textit{use} tag. Within the main SVG element there is element group called \textit{defs} which is not directly drawn to the screen, but is visible by using the browser's HTML element viewer tool.
+There are two node types in the SVG specification which allow the user to create prototypes of graphic elements, \textit{defs} and \textit{symbol}, which can be applied like a stamp via the \textit{use} tag. 
+
+Within the \drawsocket main SVG element there is element group called \textit{defs} which is not directly drawn to the screen, but is visible by using the browser's HTML element viewer tool.
 \drawsocket uses the same drawing context syntax for the \textit{defs} node, as it does for the other drawing layers.
 
 For example, the following snippet makes a new SVG group object in the \textit{defs}, called ``noteline'', which contains a line and a circle:
@@ -490,10 +496,11 @@ For example, the following snippet makes a new SVG group object in the \textit{d
   }
  \end{lstlisting}
 
-Typically the user would send a library of definitions at the beginning of the piece, and then refer to the set of definitions as needed via the the \textit{use} SVG element and its \textit{href} attribute, which references a definition by its \textit{id} attribute.
+Typically the user would send a library of definitions at the beginning of the piece, and then refer to the set of definitions as needed via the the \textit{use} SVG element and its \textit{href} attribute, which references a definition by its \textit{id} attribute.\footnote{Note that for all selections we are using the HTML/CSS \textit{\#} sign to specify that the following string is an \textit{id}.}
 
 For example, the following new SVG object ``foo'', references the ``noteline'' definition above, offset to ${x,y}$ position $\{100,100\}$:
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
   /violin/svg : {
       /new : ``use'',
@@ -503,6 +510,7 @@ For example, the following new SVG object ``foo'', references the ``noteline'' d
       /y : 100
    }
  \end{lstlisting}
+\end{minipage}
 
 \medskip
 \noindent
@@ -539,37 +547,41 @@ For example, here we load a PDF, storing it at the \drawsocket id ``foo'', and t
 
 
 \subsection{Animation}\label{sec:animation}
-\drawsocket objects may be animated using native CSS animation, however the GSAP TweenMax and TimlineMax libraries provide a much more convenient and cross-browser supported method.
-Currently the \drawsocket animation interface is only implemented in the list-oriented API.
-With the TweenMax library users can create a new ``tween'' transition between the object's current position and CSS property values to another set of values over a given amount of time, using the TweenMax.to function via the \textit{/tween/to} \drawsocket command. For example:
+While \drawsocket objects may be animated using native CSS transitions and keyframes, the GSAP TweenMax and TimlineMax libraries were introduced to provide a much more convenient and cross-browser supported method.
+With the TweenMax library users can create a new ``tween'' transition between the object's current position and CSS property values to another set of values over a given amount of time, using the TweenMax.to function via the \textit{/tween} \drawsocket command. For example:
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  {
-      /violin/aaa/tween/to : [ ``note'', 10, {
-      	/x : 100,
-	/y : 100,
-	/opacity : 0
-      }]
-   }
+
+    /violin/tween : {
+        /id : ``aaa'',
+        /target : ``#note'', 
+        /dur : 10,
+        /vars : {
+            /x : 100,
+            /y : 100,
+            /opacity : 0
+        }
+    }
  \end{lstlisting}
 \noindent
 moves the SVG object ``note'' to the ${x,y}$ positions $\{100,100\}$, and fades the opacity to zero over a course of 10 seconds.
-The format for \textit{/tween/to} is plugged directly into the argument fields for the TweenMax.to function.
 The \textit{tween} is stored as object in the \drawsocket script at the given id (here ``aaa''), and may be recalled at will (see the online documentation for more details).
+The CSS selector \textit{/target}, \textit{/dur} and \textit{/vars} are plugged directly into the argument fields for the TweenMax.to function.\footnote{See \url{https://greensock.com/docs/TweenMax/TweenMax().}}
 
-More complex animations can be implemented with the TimelineMax function, via the \drawsocket \textit{/tween/timeline} command, which is comprised of an array of tweens (which can also have different targets).
+More complex animations can be implemented with the TimelineMax function, via the \drawsocket \textit{/timeline} command, which is comprised of an array of tweens (which can also have different targets).
 As with the TweenMax.to function, an effort was made to make the encoding syntax as close to the native GSAP Timeline function as possible so users can refer to the GSAP documentation for full reference.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /*/foo_line/tween/timeline : {
+  /violin/timeline : {
+      /id : ``foo_line'',
       /init : {
           /paused : "true",
-	  /yoyo : "true",
-	  /repeat : 20
+          /yoyo : "true",
+          /repeat : 20
       },
       /tweens : [{
-	  /target : "bar",
-	  /time : 1,
+	  /target : "#bar",
+	  /dur : 1,
 	  /vars : {
 	      /y : 270,
 	      /x : 100,
@@ -578,8 +590,8 @@ As with the TweenMax.to function, an effort was made to make the encoding syntax
 	      /ease : "linear"
 	  }
       }, {
-	  /target : "bar",
-	  /time : 2,
+	  /target : "#bar",
+	  /dur : 2,
 	  /vars : {
 	       /y : 10,
 	       /x : 0,
@@ -639,7 +651,7 @@ When the user's mouse or fingers move over the screen \drawsocket reports the $x
     /new : ``path'',
     /id : ``wow'',
     /style : {
-	    /fill : ``red''
+        /fill : ``red''
     },
     /d : ``M100,100a30,30,0,0,0,0-60a30,30,0,0,0,0,60'',
     /onclick : ``processCmdObj({
