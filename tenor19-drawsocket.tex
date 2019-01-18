@@ -48,7 +48,7 @@
 
 \section{drawsocket}\label{sec:drawsocket}
 The \drawsocket design approach is based on the ``o.io'' paradigm developed at the University of California, Berkeley's Center for New Music and Technology (CNMAT), which uses the OpenSoundControl (OSC) encoding~\cite{wright:osc} to create a uniform user application programing interface (API) by ``wrapping'' vendor- and protocol- specific details in an interoperable API syntax~\cite{freed2014io, maccallum2015dynamic}.
-In this way, the \drawsocket system aims to be an ``o.io'' wrapper for web-browser display and interaction, providing an OSC API for manipulating the display building blocks of Scalable Vector Graphics (SVG)\cite{world2000scalable}, Cascading Style Sheets (CSS)~\cite{css}, HyperText Markup Language (HTML)~\cite{Faulkner:16:H}, and a curated collection of client-based JavaScript libraries for animation and sound production.
+In this way, the \drawsocket system aims to be an ``o.io'' wrapper for web-browser display and interaction, providing an OSC API for manipulating the display building blocks of Scalable Vector Graphics (SVG)\footnote{https://www.w3.org/TR/SVG11/}, Cascading Style Sheets (CSS)\footnote{https://www.w3.org/Style/CSS/specs.en.html}, HyperText Markup Language (HTML)~\footnote{https://www.w3.org/TR/html52/}, and a curated collection of client-based JavaScript libraries for animation and sound production.
 
 \begin{figure*}[]
 \centering
@@ -58,7 +58,7 @@ In this way, the \drawsocket system aims to be an ``o.io'' wrapper for web-brows
 \end{figure*}
 
 \subsection{Architecture Overview}
-The \drawsocket architecture is structured as a server-client system, using Max~\cite{puckette:max} as the primary controller interface, to send drawing messages via a Node.js~\cite{tilkov2010node} server to the client's web-browser for display. 
+The \drawsocket architecture is structured as a server-client system, using Max\footnote{https://cycling74.com}  as the primary controller interface, to send drawing messages via a Node.js\footnote{https://nodejs.org} server to the client's web-browser for display. 
 The Node Package Manager (NPM) which is bundled with Node.js allowing \drawsocket to leverage the enormous community of Javascript library development for browser based display and inter-computer communication \cite{trockman2018adding}. 
 Further, NPM also provides a practical method for managing libraries dependancies, via the \textit{package.json} system.
 
@@ -70,9 +70,9 @@ See figure~\ref{fig:drawsocket-arch} for an overview schematic of the system.
 \noindent
 \textbf{Max.}
 Currently the primary targeted user server control platform is Max, which is provides many algorithmic and interprocess communications tools. 
-Since the release of Max 8, Max now includes the NodeForMax (N4M)~\cite{nodeformax} framework, which embeds the Node.js server engine within the Max programming environment, accessible through a set of Max objects.
+Since the release of Max 8, Max now includes the NodeForMax (N4M)~\footnote{https://docs.cycling74.com/nodeformax/api/}framework, which embeds the Node.js server engine within the Max programming environment, accessible through a set of Max objects.
 
-The first versions of the \drawsocket system used an independent Node.js application running from the command prompt and a User Datagram Protocol (UDP) socket \cite{postel1980user} to send and receive OSC bundles to and from Max.
+The first versions of the \drawsocket system used an independent Node.js application running from the command prompt and a User Datagram Protocol (UDP)\footnote{https://tools.ietf.org/html/rfc768}  socket to send and receive OSC bundles to and from Max.
 After comparing benchmarks the N4M system proved to be faster, and so we adopted this platform as the primary use case.
 However, the \drawsocket system is well compartmentalized, and could easily be reconfigured to use UDP input for use with other control software.
 Within Max, the core Node.js server script, \textit{drawsocket-server.js}, is run within Max's \textit{node.script} object. For connivence, the node.script object is wrapped in Max abstraction called \textit{hfmt.drawsocket} which aids in managing file paths, and user interaction (see section~\ref{sec:setup} for more details).
@@ -80,17 +80,17 @@ Within Max, the core Node.js server script, \textit{drawsocket-server.js}, is ru
 \medskip
 \noindent
 \textbf{OSC-JSON representation.}
-The \drawsocket data is formatted as a key-value tree, which in Max can be represented as either OSC, or in Max Dictionary format, which are both very close to JavaScript Object Notation (JSON) format~\cite{crockford2012json}. See section~\ref{sec:api} below for an in-depth description of the \drawsocket messaging syntax.
+The \drawsocket data is formatted as a key-value tree, which in Max can be represented as either OSC, or in Max Dictionary format, which are both very close to JavaScript Object Notation (JSON) format~\footnote{https://www.json.org/}. See section~\ref{sec:api} below for an in-depth description of the \drawsocket messaging syntax.
 
 \subsection{Server}
 \noindent
 \textbf{Node.js.}
-The Node.js server consists of four main processes: an Express HTTP server \cite{express}, a WebSocket \cite{websockets} connection manager, state caching, and handing messages from the client (either forwarding them to the Max host environment or responding back to client, as in the case of clock synchronization and on-load initialization).
+The Node.js server consists of four main processes: an Express HTTP server \footnote{https://expressjs.com/}, a WebSocket\footnote{https://www.npmjs.com/package/ws} connection manager, state caching, and handing messages from the client (either forwarding them to the Max host environment or responding back to client, as in the case of clock synchronization and on-load initialization).
 
 \medskip
 \noindent
 \textbf{Express.}
-The Express JS library is used to create the web-sever and handle HyperText Transfer Protocol (HTTP) requests from client browsers. By default, the server responds to all page requests with a set of default HTML files which contain the basic setup necessary for most uses of the \drawsocket system, and with links to dependency JS libraries, fonts, and a default CSS stylesheet.
+The Express JS library is used to create the web-sever and handle HyperText Transfer Protocol (HTTP)\footnote{https://www.w3.org/Protocols/} requests from client browsers. By default, the server responds to all page requests with a set of default HTML files which contain the basic setup necessary for most uses of the \drawsocket system, and with links to dependency JS libraries, fonts, and a default CSS stylesheet.
 
 The \textit{html\_template} message from Max gives users the ability to set a different default HTML file if desired.
 
@@ -138,15 +138,15 @@ Firefox support is currently out of sync with the other browsers, but will be su
 \textbf{Libraries.}
 On the client-side, we are currently using the following Javascript libraries, all available from NPM:
 
-\textbf{D3.js}~\cite{d3}, a well regarded SVG library for information visualization\footnote{We are now mainly using d3.js for DOM node creation and manipulation, since Max serves as the central data model handler in the \drawsocket system. So, eventually it is likely that we will remove the d3.js dependency, to streamline the codebase. However for the time being d3's utilitity functions are convenient for rapid development, and appear to be performant enough.}.
+\textbf{D3.js},\footnote{https://d3js.org/} a well regarded SVG library for information visualization.\footnote{We are now mainly using d3.js for DOM node creation and manipulation, since Max serves as the central data model handler in the \drawsocket system. So, eventually it is likely that we will remove the d3.js dependency, to streamline the codebase. However for the time being d3's utilitity functions are convenient for rapid development, and appear to be performant enough.}
 
-\textbf{PDF.js}~\cite{pdfjs}, a PDF viewer library developed by Mozilla, providing support for PDF file reading, viewing and page turning.
+\textbf{PDF.js}, \footnote{https://mozilla.github.io/pdf.js/} a PDF viewer library developed by Mozilla, providing support for PDF file reading, viewing and page turning.
 
-\textbf{Tone.js}~\cite{mann2015interactive}, a web-audio library by Yotam Mann. Currently, \drawsocket uses tone.js to provide basic soundfile playback functionality, this may be expanded in the future.
+\textbf{Tone.js},\footnote{https://tonejs.github.io} a web-audio library by Yotam Mann. Currently, \drawsocket uses tone.js to provide basic soundfile playback functionality, this may be expanded in the future.
 
-\textbf{Timesync.js}~\cite{timesync}, \drawsocket uses the timesync.js clock synchronization library to synchronize animations, and provide a mechanism for timed commands.
+\textbf{Timesync.js},\footnote{https://www.npmjs.com/package/timesync} \drawsocket uses the timesync.js clock synchronization library to synchronize animations, and provide a mechanism for timed commands.
 
- \textbf{TweenMax} and \textbf{TimelineMax}, from the GreenSock Animation Platform (GSAP)~\cite{gsap}, a high-performance system for JS and CSS animation.
+ \textbf{TweenMax} and \textbf{TimelineMax}, from the GreenSock Animation Platform (GSAP),\footnote{https://greensock.com/gsap} a high-performance system for JS and CSS animation.
 
 \medskip
 \noindent
@@ -217,8 +217,8 @@ In larger projects it is often convenient to sort assets into separate folders f
 \section{Drawsocket API}\label{sec:api}
 The \drawsocket API has developed organically as features are gradually added to the system.
 The API was designed initially in keeping with the conventional ``message'' format used in the Max environment, so that drawing commands could easily connect to commands used for other Max drawing objects such as LCD, or jit.gl.sketch.
-A Max message is structured as an array, beginning with a selector string, followed by a list of values, which is interpreted by the receiver based on a known schema.
-However, as more features were added, some complications arose in regard to the sequence ordering, and as a result an alternative object-oriented API was developed, which makes use of a schema-less key/value approach that has proven more flexible for the \drawsocket system (discussed below in section~\ref{sec:objstyle}).
+A Max message is structured as an array, beginning with a selector string, followed by a list of values, which is interpreted by the receiver based on a preexisting (but ) schema.
+However, as more features were added, some complications arose in regard to the sequence ordering, and as a result an alternative object-oriented API was developed, which makes use of a key-value approach that has proven more flexible for the \drawsocket system (discussed below in section~\ref{sec:objstyle}).
 The API is still under development, and at the moment, we are transitioning the system to the object-oriented approach, which has several important advantages described below. 
 The list-oriented approach is currently still functional, but deprecated.
 
@@ -228,7 +228,8 @@ Note that in the discussion below, we use the term \textit{message} as a general
 \noindent
 \textbf{OSC prefix routing.}  
 All messages sent from the server, are prefixed by the client's OSC prefix, which is used to route messages to the appropriate clients. 
-Multiple clients may be logged into the same URL, in which case they would all receive the same drawing commands. For example if you had a group of violins all playing the same part you could have them log into the URL \textit{http://server.ip.address:port/violin1}.
+Multiple clients may be logged into the same URL, in which case they would all receive the same drawing commands. 
+For example if you had a group of violins all playing the same part you could have them log into the URL \textit{http://server.ip.address:port/violin1}.
 Then to send messages to the violin 1 section, you would prefix the drawing message with \textit{/violin1}.
 
 To send to all clients, regardless of OSC prefix, \drawsocket provides usage of the OSC \textit{/*} wildcard address.
@@ -244,8 +245,7 @@ On creation, the client-side script logs a reference to new objects with their u
 Through this method, objects may be referred to by name modified, styled, transformed, or removed.
 SVG and HTML nodes use the provided unique identifier as the node's \textit{id} attribute, as per the standard WC3 Document Object Model (DOM)\cite{Champion:04:DOM}, while other objects such as GSAP animation or tone.js sound objects are not in the DOM, but logged in the \drawsocket's internal object model.
 
-As we will see below, the object-array API also provides access to CSS selectors, which opens up other methods for object selection and grouping through CSS classes.
-
+As we will see below, the object-oriented API also provides access to CSS selectors, which opens up other methods for object selection and grouping through CSS classes.
 
 
 \subsection{List-oriented API}\label{sec:maxstyle}
@@ -303,11 +303,11 @@ In this case, the \textit{/style} message is bound to the \textit{/path} message
 % essentially, since we're using the key here as a command switch, we need to use the Object.keys but this is not always in order? need to triple check this
 % see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in#Array_iteration_and_for...in
 
-This solution led to a reevaluation of the \drawsocket API syntax, and resulted in the development of the object-array based API.
+This solution led to a reevaluation of the \drawsocket API syntax, and resulted in the development of the object-oriented based API.
 
-\subsection{Object-Array API}\label{sec:objstyle}
+\subsection{Object-oriented API}\label{sec:objstyle}
 While the list-oriented approach provides a concise, one-line syntax for executing \drawsocket commands in the browser, by creating an wrapper around the the manipulation of SVG elements, and other client-side processes, there is a certain amount of data reduction involved, providing the user with simplified interface to produce the desired result. 
-The simplification of command syntax is useful in some cases for fast prototyping, however after working out the above solution to the list-oriented grouping approach, it became clear that this approach could also be used to provide a more direct interface to the SVG specification. 
+The simplification of command syntax is useful in some cases for fast prototyping, however after working out the above solution to the list-oriented grouping approach, it became clear that this approach could also be used to provide a more direct interface to the SVG specification.  \textcolor{red}{mention schema-less here}
 
 The ``object-array'' API uses an array of objects which are processed in a similar way to the ``list-oriented'' API, except that rather than concatenating the sequence of \textit{id}, \textit{command}, and associated generic list of values that need to fit a certain order to be interpreted correctly by the client-side script, the object-oriented approach groups all parameters together in an object and provides separate identifiers for each element. 
 
