@@ -590,7 +590,7 @@ With the TweenMax library users can create a new ``tween'' transition between th
 \noindent
 moves the SVG object ``note'' to the ${x,y}$ positions $\{100,100\}$, and fades the opacity to zero over a course of 10 seconds.
 The \textit{tween} is stored as object in the \drawsocket script at the given id (here ``aaa''), and may be recalled at will (see the online documentation for more details).
-The CSS selector \textit{/target}, \textit{/dur} and \textit{/vars} are plugged directly into the argument fields for the TweenMax.to function.\footnote{See \url{https://greensock.com/docs/TweenMax/TweenMax().}}
+The CSS selector \textit{/target}, \textit{/dur} and \textit{/vars} are plugged directly into the argument fields for the TweenMax.to function.\footnote{https://greensock.com/docs/TweenMax/TweenMax()}
 
 More complex animations can be implemented with the TimelineMax function, via the \drawsocket \textit{/timeline} command, which is comprised of an array of tweens (which can also have different targets).
 As with the TweenMax.to function, an effort was made to make the encoding syntax as close to the native GSAP Timeline function as possible so users can refer to the GSAP documentation for full reference.
@@ -637,26 +637,31 @@ Using the timesync.js library, the client periodically asks the server for its c
 Then, whenever a new animation start request is received, the client checks the message's timestamp relative to the current client clock time minus the logged difference from the server time to get the corrected animation start time in terms of the server clock.
 The client then checks the duration of the animation (tween or timeline) to make sure it hasn't already missed the end time for the animation, if not, the client script starts the animation, fast-forwarding if necessary to compensate for network lag.
 
-
 \subsection{Sound}\label{sec:sound}
-In addition to providing access to browser-based drawing tools, \drawsocket also makes use of the Tone.js~\cite{mann2015interactive} WebAudio framework for browser-based sound production.
+In addition to providing access to browser-based drawing tools, \drawsocket also makes use of the Tone.js~\cite{mann2015interactive} WebAudio\footnote{https://www.w3.org/TR/webaudio/} Framework for browser-based sound production.
 Currently \drawsocket supports only loading and playing sound files, but in the future we may add other features from Tone.js as well.
 Also, currently Tone.js access is only available through the list API. 
-The syntax is similar to the PDF example above. 
 
+\noindent
+\begin{minipage}{\linewidth}
+The syntax is similar to the PDF example above:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
       /violin/kicker/sample/load : "/media/kick.mp3",
 \end{lstlisting}
+
 \noindent
 loads an .mp3 file into memory, and stores a Tone.js sample object to the reference name ``kicker'', and
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
       /violin/kicker/sample/play : 1
 \end{lstlisting}
+
 \noindent
 triggers playback of the sample.
+\end{minipage}
 
+\medskip
 Note that there is some time required to load the file, so the client will fail to play the file if it hasn't finished loading it yet. At the moment there is no notification for when the file has finished loading, but this could be added easily.
 Note also that to start the browser audio, users must first click or touch the screen if using a tablet.
 
