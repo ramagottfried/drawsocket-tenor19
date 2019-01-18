@@ -217,8 +217,8 @@ In larger projects it is often convenient to sort assets into separate folders f
 \section{Drawsocket API}\label{sec:api}
 The \drawsocket API has developed organically as features are gradually added to the system.
 The API was designed initially in keeping with the conventional ``message'' format used in the Max environment, so that drawing commands could easily connect to commands used for other Max drawing objects such as LCD, or jit.gl.sketch.
-A Max message is structured as an array, beginning with a selector string, followed by a list of values, which is interpreted by the receiver based on a preexisting (but ) schema.
-However, as more features were added, some complications arose in regard to the sequence ordering, and as a result an alternative object-oriented API was developed, which makes use of a key-value approach that has proven more flexible for the \drawsocket system (discussed below in section~\ref{sec:objstyle}).
+A Max message is structured as an array, beginning with a selector string, followed by a list of values, which is interpreted by the receiver based on a preexisting schema.
+However, as more features were added, some complications arose in regard to the sequence ordering, and as a result an alternative object-oriented API was developed, which makes use of a key-value approach that has proven more extendable for the \drawsocket system (discussed below in section~\ref{sec:objstyle}).
 The API is still under development, and at the moment, we are transitioning the system to the object-oriented approach, which has several important advantages described below. 
 The list-oriented approach is currently still functional, but deprecated.
 
@@ -306,51 +306,76 @@ In this case, the \textit{/style} message is bound to the \textit{/path} message
 This solution led to a reevaluation of the \drawsocket API syntax, and resulted in the development of the object-oriented based API.
 
 \subsection{Object-oriented API}\label{sec:objstyle}
-While the list-oriented approach provides a concise, one-line syntax for executing \drawsocket commands in the browser, by creating an wrapper around the the manipulation of SVG elements, and other client-side processes, there is a certain amount of data reduction involved, providing the user with simplified interface to produce the desired result. 
-The simplification of command syntax is useful in some cases for fast prototyping, however after working out the above solution to the list-oriented grouping approach, it became clear that this approach could also be used to provide a more direct interface to the SVG specification.  \textcolor{red}{mention schema-less here}
+While the list-oriented approach provides a compact, one-line syntax, this formatting approach also by nature limited, in that the list requires a predefined schema for how the list can be interpreted, and which types of operations the list values may address. 
+The list based approach is thus less easily extendable, since adding a new value to the list requires adding a new step in the interpreting script.
+The main benefit of the list syntax is that its compactness makes it sometimes faster for rapid prototyping, however the object-oriented approach can be more easily expanded since the self-describing key-value format allows the receiver to map the input data to a wider set of possibilities.
 
-The ``object-array'' API uses an array of objects which are processed in a similar way to the ``list-oriented'' API, except that rather than concatenating the sequence of \textit{id}, \textit{command}, and associated generic list of values that need to fit a certain order to be interpreted correctly by the client-side script, the object-oriented approach groups all parameters together in an object and provides separate identifiers for each element. 
+%The ``object-array'' API uses an array of objects which are processed in a similar way to the ``list-oriented'' API, except that rather than concatenating the sequence of \textit{id}, \textit{command}, and associated generic list of values that need to fit a certain order to be interpreted correctly by the client-side script, the object-oriented approach groups all parameters together in an object and provides separate identifiers for each element. 
 
-Currently, there are object-array methods implemented for creating and editing SVG and CSS parameters.
-
-For example, here is an example using an \textit{/svg} object array to create a rectangle and line on client browsers logged into the \textit{/violin} URL:
-
+For example, whereas above we drew a line with a list like so:
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/svg : [{
+  /violin/foo/draw/rect : [100, 100, 25, 25]
+\end{lstlisting}
+
+\noindent
+The same line could be drawn with the object-based API which uses the \textit{/svg} message, where the \textit{/new} keyword notifies the client that it should create a new SVG element:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
+  /violin/svg : {
       /new : ``rect'',
       /id : ``foo'',
       /x : 100,
       /y : 100,
       /width : 25,
       /height: 25
-  }, {
-      /new : ``line'',
-      /id : ``bar'',
-      /x1 : 10,
-      /x2 : 20,
-      /y1 : 20,
-      /y2 : 20
-  }]
+  }
 \end{lstlisting}
+\end{minipage}
 
 \noindent
-Note that in the object-array API, we set the native SVG attributes by name as per the SVG specification, with the exception of the the \textit{/new} keyword.
+We can see that in the object-based approach each variable now has a key value, telling us what the variable represents.
+The list-approach is a more concise, requiring less typing, however, when we think further about what the message is trying to achieve, the benefit of the object approach becomes clearer.
+
+In fact, SVG, like most browser-based systems, is designed as object \textit{nodes}, with a set of \textit{attributes} the node understands, which are defined as key-value pairs.
+So, by using the same attribute names within the \drawsocket object API, the client script can then simply insert as few or many of the attributes that it receives, rather than needed a specific set of values in a list.
+And the user can then refer to the SVG specification directly to figure out which attributes they can use.
+
+For example with the object approach we can do things like add a CSS \textit{class} reference:
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
+  /violin/svg : {
+      /new : ``rect'',
+      /id : ``foo'',
+      /x : 100,
+      /y : 100,
+      /width : 25,
+      /height: 25,
+      /class : ``room''
+  }
+\end{lstlisting}
+\end{minipage}
+
+The \drawsocket object API uses the native SVG attributes by name as per the SVG specification, with the addition of the \textit{/new} keyword.
 There are currently three reserved keywords used with the \textit{/svg} object array: \textit{/new}, \textit{/style}, and \textit{/child}.
 
-On receiving a \textit{/svg} object array, the client-side script iterates each element of the array, and checks if there is an \textit{/id} tag; if so, it selects that element from the lookup table.
+On receiving a \textit{/svg} object (or array of objects), the client-side script iterates each element of the array, and checks if there is an \textit{/id} tag; if so, it selects that element from the lookup table.
 Next the script checks if there is a \textit{/new} message in the object; if so, it creates a new node, either replacing the element at the existing \textit{/id}, or creating a new node if not already existing, and then processes the rest of the object messages.
 
-This is convenient, because it means the order of the element is not important.
+This is also convenient, because it means the order of the element is not important.
 Additionally, with the object based method, the script does not make any assumptions about the attributes that the user sets in the SVG node.
 Rather than needing to know the order of elements in a list designed by the script author, the user can refer to the official SVG specification, and make use of a larger set of possible attributes and operations.\footnote{That said, we have not yet fully tested the entire SVG specification. We believe the object API provides access to everything, but there maybe some unaddressed aspects.} 
 Elements may also be partially updated by this method, for example if after sending the above object array, creating the objects ``foo'' and ``bar'', sending the message:
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
   /violin/svg : {
       /id : ``foo'',
       /width : 100
   }
   \end{lstlisting}
+\end{minipage}
 
 \noindent
 will set only the \textit{/width} attribute of the node ``foo''.
