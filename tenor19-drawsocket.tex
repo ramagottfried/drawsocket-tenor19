@@ -331,10 +331,6 @@ To address these two issues, the list-oriented grouping syntax was adapted to us
 
 \noindent
 In this case, the \textit{/style} message is bound to the \textit{/path} message by wrapping them together in an object. 
-%\footnote{A third issue that came up was concerns with the ordering of the messages, since historically JS Objects were not required to maintain the ordering of messages, as compared to JS Arrays. However, apparently since ES ..... actually I'm not 100% clear on this, removing for now
-% essentially, since we're using the key here as a command switch, we need to use the Object.keys but this is not always in order? need to triple check this
-% see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in#Array_iteration_and_for...in
-
 This solution led to a reevaluation of the \drawsocket API syntax, and resulted in the development of the object-oriented based API.
 
 \subsection{Object-oriented API}\label{sec:objstyle}
@@ -690,27 +686,26 @@ For example, to reference an object with the id ``boo'' in an external file call
 
 If \textit{x} or \textit{y} attributes are set in the \textit{use} node, the referenced object will be offset by the amount specified by the  \textit{use} attributes.
 
-\drawsocket also provides an additional option with the \textit{href} attribute. If the \textit{href} value is a list, the second value is non-zero, the script will find the original object's bounding box and offset so that it lies at the origin $\{0,0\}$, and then applies the ${x,y}$ values as a second operation. The benefit of this feature is that it allows you to coordinate positions of objects without needing to know their original position in the reference file. However, this helper tool uses a callback function to perform the offset after first loading the file which does incur a slight delay (albeit quite short).\footnote{This is also true when loading images since some browsers need to know the width and height of the image before it will display.}
-Therefore, for use in time sensitive situations it is recommended to place the library objects in the reference document at the origin point, and use the standard approach in the above snippet.
+\drawsocket also provides an additional option with the \textit{href} attribute. If the \textit{href} value is a list, the second value is non-zero, the script will find the original object's bounding box and offset so that it lies at the origin $\{0,0\}$, and then applies the ${x,y}$ values as a second operation. The benefit of this feature is that it allows you to coordinate positions of objects without needing to know their original position in the reference file.
 
 \subsection{PDF import}\label{sec:pdf}
-PDF files may be imported as special \drawsocket objects, via the pdf.js Mozilla library.
-Currently PDF viewing is only implemented in the list-oriented API. 
-To load a PDF file, you can use the \textit{/pdf/load} command, followed by the path location of the file in the public folder, and then to set the PDF page you can use the command \textit{/pdf/page} followed by a page index.
-
-For example, here we load a PDF, storing it at the \drawsocket id ``foo'', and then set it to page 2:
+PDF files may be imported into \drawsocket.
+For example, to load a PDF, storing it at the \drawsocket id ``foo'', setting it's \textit{x} position, \textit{width} and then set it to page 2:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  {
-      /violin/foo/pdf/load : "score.pdf",
-      /violin/foo/pdf/page : 2
+  /*/pdf : {
+      /id : "newpdf",
+      /href : "/media/flint_piccolo_excerpt.pdf",
+      /width : 600,
+      /x : 100,
+      /page : 2
   }
  \end{lstlisting}
 
 
 \subsection{Animation}\label{sec:animation}
 While \drawsocket objects may be animated using native CSS transitions and keyframes, the GSAP TweenMax and TimlineMax libraries were introduced to provide a much more convenient and cross-browser supported method.
-With the TweenMax library users can create a new ``tween'' transition between the object's current position and CSS property values to another set of values over a given amount of time, using the TweenMax.to function via the \textit{/tween} \drawsocket command. For example:
+With the TweenMax library users can create a ``tween'' transition between the object's current position and current CSS property values, to another set of values over a given amount of time, using the TweenMax.to function via the \textit{/tween} \drawsocket command. For example:
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
 
     /violin/tween : {
@@ -766,6 +761,8 @@ As with the TweenMax.to function, an effort was made to make the encoding syntax
 \end{lstlisting}
 \end{minipage}
 
+\drawsocket provides the \textit{/cmd} keyword for tweens (and timelines of tweens) to start, stop, reset, reverse, etc.
+
 \medskip
 \noindent
 \textbf{Synchronization.} 
@@ -777,30 +774,24 @@ The client then checks the duration of the animation (tween or timeline) to make
 \subsection{Sound}\label{sec:sound}
 In addition to providing access to browser-based drawing tools, \drawsocket also makes use of the Tone.js~\cite{mann2015interactive} WebAudio\footnote{https://www.w3.org/TR/webaudio/} Framework for browser-based sound production.
 Currently \drawsocket supports only loading and playing sound files, but in the future we may add other features from Tone.js as well.
-Also, currently Tone.js access is only available through the list API. 
 
-\noindent
-\begin{minipage}{\linewidth}
-The syntax is similar to the PDF example above:
+For example, to load an mp3 file and start looping playback:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-      /violin/kicker/sample/load : "/media/kick.mp3",
+/*/sound : {
+    /new : "Player",
+    /id : "kick",
+    /vars : {
+        /url : "/media/808_mp3/kick1.mp3",
+        /autostart : "true",
+        /loop : "true"
+    }
+}
 \end{lstlisting}
 
-\noindent
-loads an .mp3 file into memory, and stores a Tone.js sample object to the reference name ``kicker'', and
-
-\begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-      /violin/kicker/sample/play : 1
-\end{lstlisting}
-
-\noindent
-triggers playback of the sample.
-\end{minipage}
-
-\medskip
-Note that there is some time required to load the file, so the client will fail to play the file if it hasn't finished loading it yet. At the moment there is no notification for when the file has finished loading, but this could be added easily.
-Note also that to start the browser audio, users must first click or touch the screen if using a tablet.
+%\medskip
+%Note that there is some time required to load the file, so the client will fail to play the file if it hasn't finished loading it yet. At the moment there is no notification for when the file has finished loading, but this could be added easily.
+%Note also that to start the browser audio, users must first click or touch the screen if using a tablet.
 
 \subsection{User Interaction}\label{sec:interaction}
 Lastly, \drawsocket also sends user interaction information back to the server, outputting the data into Max where it can be used to control other processes, through mouse and multi-touch event listeners, and via HTML textfield input forms.
