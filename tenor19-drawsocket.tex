@@ -789,6 +789,35 @@ For example, to load an mp3 file and start looping playback:
 }
 \end{lstlisting}
 
+
+\subsection{HTML5}\label{sec:html}
+\drawsocket provides access to HTML nodes via the \textit{/html} tag. 
+
+For example, this loads a video:
+
+\begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
+/*/html : {
+    /new : "video",
+    /id : "foo",
+    /child : {
+        /new : "source",
+        /type : "video/mp4",
+        /src : "somerandommovie.mp4"
+    }
+}
+\end{lstlisting}
+
+HTML5 JS functions can be called (on HTML objects) via the \textit{/call} keyword. For example, this starts playing the above video:
+
+\begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
+/*/html : {
+    /id : "foo",
+    /call : {
+        /play : ""
+    }
+}
+\end{lstlisting}
+
 %\medskip
 %Note that there is some time required to load the file, so the client will fail to play the file if it hasn't finished loading it yet. At the moment there is no notification for when the file has finished loading, but this could be added easily.
 %Note also that to start the browser audio, users must first click or touch the screen if using a tablet.
@@ -806,16 +835,21 @@ When the user's mouse or fingers move over the screen \drawsocket reports the $x
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
 /*/svg : {
-    /new : ``path'',
-    /id : ``wow'',
+    /new : "path",
+    /id : "wow",
     /style : {
-        /fill : ``red''
+        /fill : "red"
     },
-    /d : ``M100,100a30,30,0,0,0,0-60a30,30,0,0,0,0,60'',
-    /onclick : ``processCmdObj({
-        key: `/kick/sample/play',
-        val: 1
-    })''
+    /d : "M100,100a30,30,0,0,0,0-60a30,30,0,0,0,0,60",
+    /onclick : "processCmdObj({
+        key: 'sound',
+        val: {
+            id: 'kick',
+            call: { 
+                restart: '' 
+            }
+        }
+    })"
 }
 \end{lstlisting}
 
