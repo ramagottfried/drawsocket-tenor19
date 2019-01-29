@@ -3,15 +3,15 @@
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=0.9\textwidth]{maxscore-traditional.png} 
+        \includegraphics[width=0.9\textwidth]{Tenor-Paper-6.jpg} 
                 \caption{A score with a random melody rendered in MaxScore’s default layout.
-        \label{fig:maxscore-traditional}}
+        \label{fig:Tenor-Paper-6}}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{maxscore-proportional.png} 
+        \includegraphics[width=1\textwidth]{Tenor-Paper-7.jpg} 
        	\caption{Same score after applying proportional notation. The default hold times indicated by the blue line is set to 80\% of the event’s nominal duration.
-\label{fig:maxscore-proportional}}
+\label{fig:Tenor-Paper-7}}
     \end{minipage}
 \end{figure*}
 
@@ -50,7 +50,16 @@ Figure \ref{fig:maxscore-mesages} shows a sample of rendering messages generated
 
 render2Browser.js is also capable of animating any number of cursors moving across set of measures and staves (see TENOR 2018 paper).
 
-Figure x. A MaxScore score with 4 staves (top) rendered dynamically in four browser windows (center and bottom). The staves are split and grouped by render2Browser.js according to the following staffgroup settings: “0 1-2 2 0+3”.
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{1.\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{Tenor-Paper-1.png} 
+       	\caption{A MaxScore score with 4 staves (top) rendered dynamically in four browser windows (center and bottom). The staves are split and grouped by render2Browser.js according to the following staffgroup settings: 0 1-2 2 0+3.
+\label{fig:Tenor-Paper-1}}
+    \end{minipage}
+\end{figure*}
+
 
 To scroll the entire score horizontally, we created another JavaScript object called maxscore.proportionalNotation.js. It toggles between MaxScore’s default score layout and its proportional representation by hiding rests, stems, beams and naturals and indicating the duration of a note by a line extending from a note. The length of a measure is calculated by obtaining its tempo and time signature values and taking a setTimeUnit attribute into consideration. The durational scaling base value of 0.385 has proven to be optimal for spatially representing the delta time between events. The start message will cause a playhead to appear at the position given by the scoreLeftMargin attribute and instruct the browser to scroll the score. We are planning to also support scores created for the Decibel ScorePlayer in the future. 
 
@@ -64,8 +73,15 @@ To scroll the entire score horizontally, we created another JavaScript object ca
 \section{Case study}
 
 A new  piece (Raindrops Keep Falling) by Georg Hajdu was premiered at the December 2018 WOCMAT conference in Hsinchu, Taiwan. This composition for clarinet, cello and percussion with multimedia consists of a transition between various rain samples and a late-1960’s hit called Raindrops Keep Fallin' on My Head mediated by a Max Pluggo effect called Raindrops. It’s also a tongue-in-cheek reference to the usual end-of-year weather pattern in Taiwan. The piece features 12 different versions of the song found on the Internet. The HfMT graduate student and research assistant James Cheung arranged the songs in such manner that they all share the same tempo structure and key signature, allowing the seamless navigation between those versions. James also created an arrangement of the song for the aforementioned instrumentation to be performed simultaneously with the recording, which was further subject to processing. First, parts of the score were “whited out” by a probabilistic process so that more and more events were allowed to appear paralleling a similar process applied to the audio tracks. The whiting-out was achieved by a JavaScript object called maxscore.whiteout.js capable of applying a “whiteout” gradient to a given section (the name was inspired by Cat Hope’s piece The Great White). Second, the score was turned into proportional notation, transmitted to the iPads of the performers via hfmt.drawsocket and scrolled in synch with the audio. The system held up to its promise as a computer-based conducting system. The scrolling was fluid and the musicians stayed in tempo despite the tempo fluctuations in the audio track. 
- 
-Figure x. Excerpt from Raindrops Keep Falling (2018) for clarinet, cello and drum set.
 
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.6\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{Tenor-Paper-8.jpg} 
+       	\caption{Excerpt from Raindrops Keep Falling (2018) for clarinet, cello, drum set and multimedia.
+\label{fig:Tenor-Paper-8}}
+    \end{minipage}
+\end{figure*}
 
 
