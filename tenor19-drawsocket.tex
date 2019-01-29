@@ -44,6 +44,8 @@ Included is a discussion of the architecture design and development process, fol
 
 \end{abstract}
 
+\input{intro-foundations.tex}
+
 \section{drawsocket}\label{sec:drawsocket}
 The \drawsocket design approach is based on the ``o.io'' paradigm developed at the University of California, Berkeley's Center for New Music and Technology (CNMAT), which uses the OpenSoundControl (OSC) encoding~\cite{wright:osc} to create a uniform user application programing interface (API) by ``wrapping'' vendor- and protocol- specific details in an interoperable API syntax~\cite{freed2014io, maccallum2015dynamic}.
 In this way, the \drawsocket system aims to be an ``o.io'' wrapper for web-browser display and interaction, providing an OSC API for manipulating the display building blocks of Scalable Vector Graphics (SVG)\footnote{https://www.w3.org/TR/SVG11/}, Cascading Style Sheets (CSS)\footnote{https://www.w3.org/Style/CSS/specs.en.html}, HyperText Markup Language (HTML)~\footnote{https://www.w3.org/TR/html52/}, and a curated collection of client-based JavaScript libraries for animation and sound production.
@@ -827,7 +829,7 @@ When the user's mouse or fingers move over the screen \drawsocket reports the $x
 \end{lstlisting}
 
 
-% \input{maxscore-taiwan}
+\input{maxscore-taiwan}
 
 
 %
