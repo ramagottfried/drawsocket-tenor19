@@ -854,39 +854,30 @@ When the user's mouse or fingers move over the screen \drawsocket reports the $x
 }
 \end{lstlisting}
 
-
+% Georg's files
 \input{maxscore-taiwan}
 
 
-%
-%\section{Maxscore}
-%
-%describe use of hfmt.drawsocket via Maxscore translation script.
-%
-%\section{Case study}
-%
-%Georg's piece in Taiwan
-%
-%
-\section{Conclusion and Perspectives}
+\section{Future Work}
 
-More testing needs to be done for large scale distributions, to determine how robust the messaging system is with many clients.
+\drawsocket currently still considered ``in development'', that said, the system has already been used in several live performances, and appears to be fairly robust.
+As we prepare for the large-scale extension of the system to the St. Pauli Elbtunnel we will have a good opportunity to fully stress-test the system.
 
-Mention WIFI research for St. Pauli tunnel here?
+One potential issue that we imagine could arise is with the caching system. 
+Currently the caching routine is processed within the callback function that gets called when a new dictionary arrives from Max.
+On receiving a new dictionary, the server routes the data, sending packets to the appropriate clients, and then sends the packets to the cache system which unions the data with any nodes with a matching \textit{id} (or \textit{selector} in the case of CSS).
+There is a question about the scalability of this approach. 
 
-%considering remove d3.js to reduce project size, since we're only using it for DOM manipulation and basic attr/node creation, which could easily be done with vanilla JS.
+Node.js, like vanilla JS, uses an ``event driven'', ``single threaded event loop model'', which uses a queue of event callbacks which need to be processed asynchronously.
+However, it is possible to block the event loop\cite{node-eventloop} within a callback function, should the execution take too long.
+In particular, the JSON.parse and JSON.stringify operations are potentially expensive, with a complexity of $O(n)$; so, depending on the size of the incoming dictionary, this could significantly slow down the response of the server.
+In our testing so far, we have already noticed some issues with processing very large dictionaries arriving from Max, but we need to investigate further.
+It is possible that since the data is broadcasted before being sent to the caching system, that the blocking of the event loop will be less noticeable on the client-side, however, the responsiveness of the server will be reduced and this will likely effect the clock-synchronization routine, and could also in extreme cases result in a buildup of events to process in queue.
+To address this issue, we might look into storing the prefix states in a separate database, which runs as a separate process.
 
-%considering changing API to focus on more complete object array system (nodes : [], and cssnodes : [] ) since this would be closer to the native SVG/HTML/CSS/JS code, giving many more options for the user. Also, using explicitly named attributes rather than shorthand lists would make it easier for people to learn how to use the system by using the SVG specification reference directly. Note that this can almost already be done by setting a different base HTML page with a different default CSS form.
-
-%also consider adding an inject HTML option as well, a possible issue though is that we'd still need to select the newly created DOM object to store it in the node cache for fast access by GSAP and/or other manipulations.
-
-%at the moment the computation is offloaded to the client 
 
 \begin{acknowledgments}
-
-\innovativ grant
-
-
+The authors would like to thank Jacob Sello for and James Cheung for their detailed testing the system which pushed the development of many new features and design considerations. We would also like to acknowledge the Federal Ministry of Education and Research in Germany (BMBF), for their support of this research through the Innovative Hochschule: Stage\_2.0 initiative.
 \end{acknowledgments} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
