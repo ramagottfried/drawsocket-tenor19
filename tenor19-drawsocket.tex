@@ -5,13 +5,12 @@
 \def\papertitle{drawsocket: A browser based system for networked score display%:  and the St. Pauli Elbtunnel project
 }
 \def\firstauthor{Rama Gottfried}
-\def\secondauthor{Jacob Sello}
-\def\thirdauthor{Georg Hajdu}
+\def\secondauthor{Georg Hajdu}
 
 \def\Hochschule{ Hochschule f\"ur Musik und Theater}
 
 \title{\papertitle}
- \threeauthors
+ \twoauthors
    {\firstauthor} {	
       Hochschule f\"ur Musik und Theater\\
          Hamburg, Germany \\ %
@@ -19,12 +18,8 @@
     {\secondauthor} {
    Hochschule f\"ur Musik und Theater\\
    Hamburg, Germany \\ %
-   \small{\tt \href{mailto:jacob.sello@hfmt-hamburg.de}{jacob.sello@hfmt-hamburg.de}}}
-   {\thirdauthor} {
-   Hochschule f\"ur Musik und Theater\\
-   Hamburg, Germany \\ %
    \small{\tt \href{mailto:georg.hajdu@hfmt-hamburg.de}{georg.hajdu@hfmt-hamburg.de}}}
-
+ 
 % other setup
 \input{tenor19-setup}
 
@@ -44,7 +39,7 @@ Included is a discussion of the architecture design and development process, fol
 
 \end{abstract}
 
-\input{intro-foundations.tex}
+%\input{intro-foundations.tex}
 
 \section{drawsocket}\label{sec:drawsocket}
 The \drawsocket design approach is based on the ``o.io'' paradigm developed at the University of California, Berkeley's Center for New Music and Technology (CNMAT), which uses the OpenSoundControl (OSC) encoding~\cite{wright:osc} to create a uniform user application programing interface (API) by ``wrapping'' vendor- and protocol- specific details in an interoperable API syntax~\cite{freed2014io, maccallum2015dynamic}.
@@ -855,7 +850,7 @@ When the user's mouse or fingers move over the screen \drawsocket reports the $x
 \end{lstlisting}
 
 % Georg's files
-\input{maxscore-taiwan}
+%\input{maxscore-taiwan}
 
 
 \section{Future Work}

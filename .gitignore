@@ -8,3 +8,4 @@
 *.out
 *.blg
 /old
+*.synctex
