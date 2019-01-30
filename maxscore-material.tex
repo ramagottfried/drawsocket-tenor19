@@ -1,0 +1,70 @@
+% load TENOR file template
+\input{tenor19-packages}
+
+% paper title, authors
+\def\papertitle{Networked Score Performance in the St. Pauli Elbtunnel}
+\def\firstauthor{Rama Gottfried}
+\def\secondauthor{Jacob Sello}
+\def\thirdauthor{Georg Hajdu}
+
+\def\Hochschule{ Hochschule f\"ur Musik und Theater}
+
+\title{\papertitle}
+ \threeauthors
+   {\firstauthor} {	
+      Hochschule f\"ur Musik und Theater\\
+         Hamburg, Germany \\ %
+   \small{\tt \href{mailto:rama.gottfried@hfmt-hamburg.de}{rama.gottfried@hfmt-hamburg.de}}}
+    {\secondauthor} {
+   Hochschule f\"ur Musik und Theater\\
+   Hamburg, Germany \\ %
+   \small{\tt \href{mailto:jacob.sello@hfmt-hamburg.de}{jacob.sello@hfmt-hamburg.de}}}
+   {\thirdauthor} {
+   Hochschule f\"ur Musik und Theater\\
+   Hamburg, Germany \\ %
+   \small{\tt \href{mailto:georg.hajdu@hfmt-hamburg.de}{georg.hajdu@hfmt-hamburg.de}}}
+
+% other setup
+\input{tenor19-setup}
+
+\begin{document}
+%
+
+\capstartfalse
+\maketitle
+\capstarttrue
+%
+\begin{abstract}
+In this paper we present a new distributed score display system currently under development at the Hochschule f\"ur Musik und Theater, Hamburg.
+The project was initiated as part of a large-scale live performance in the St. Pauli Elbtunnel, for 144 musicians spread out over 864 meters of tunnel.
+We describe here the background of this project and the current status of the technological and musical considerations required to achieve this event.
+
+\end{abstract}
+
+\input{intro-foundations.tex}
+
+\section{Drawsocket}
+The \drawsocket system consists of a Node.js server running inside a Max abstraction called hfmt.drawsocket.
+Using the NodeForMax environment, the server functions to relays messages from a Max patch to client browsers, routed to individually addressable channels based on the browsers' URL.
+The server uses the URL as an OpenSoundControl (OSC) address prefix, which tags messages with a target destination.
+When new drawing commands are received by the server, the commands are routed to the client browsers via WebSockets.
+On receiving new messages from the server, the client parses the data and uses it to produce new display information in the browser, using Scalable Vector Graphics (SVG) as the main display format.
+The system also provides tools for animation of graphic elements, as well as user interaction callbacks, among other features.
+With this system in place, MaxScore connects through the hfmt.drawsocket Max abstraction to the client browsers, and then renders its score for each remote location based on the OSC address prefix.
+
+
+\input{maxscore-taiwan}
+
+\begin{acknowledgments}
+The authors would like to thank Jacob Sello for and James Cheung for their detailed testing the system which pushed the development of many new features and design considerations. We would also like to acknowledge the Federal Ministry of Education and Research in Germany (BMBF), for their support of this research through the Innovative Hochschule: Stage\_2.0 initiative.
+\end{acknowledgments} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%bibliography here
+\balance
+\bibliography{symbolist}
+\end{document}
+
+
+
+
