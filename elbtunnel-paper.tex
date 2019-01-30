@@ -2,18 +2,23 @@
 \input{tenor19-packages}
 
 % paper title, authors
-\def\papertitle{Networked Score Performance in the St. Pauli Elbtunnel}
+\def\papertitle{Massive Networked Music Performance in the St. Pauli Elbtunnel
+}
 \def\firstauthor{Georg Hajdu}
-\def\secondauthor{Georg Hajdu}
+\def\secondauthor{Rama Gottfried}
 
 \def\Hochschule{ Hochschule f\"ur Musik und Theater}
 
 \title{\papertitle}
- \oneauthor
+\twoauthors
    {\firstauthor} {	
       Hochschule f\"ur Musik und Theater\\
          Hamburg, Germany \\ %
    \small{\tt \href{mailto:georg.hajdu@hfmt-hamburg.de}{georg.hajdu@hfmt-hamburg.de}}}
+    {\secondauthor} {
+   Hochschule f\"ur Musik und Theater\\
+   Hamburg, Germany \\ %
+   \small{\tt \href{mailto:rama.gottfried@hfmt-hamburg.de}{rama.gottfried@hfmt-hamburg.de}}}
 
 
 % other setup
@@ -28,7 +33,7 @@
 %
 \begin{abstract}
 In this paper we present a new distributed score display system currently under development at the Hochschule f\"ur Musik und Theater, Hamburg.
-The project was initiated as part of a large-scale live performance in the St. Pauli Elbtunnel, for 144 musicians spread out over 864 meters of tunnel.
+The project was initiated as part of a large-scale live performance in the St. Pauli Elbe tunnel (sometimes also referred to as Old Elbe Tunnel), for 144 musicians spread out over the 864 meters of its two tubes.
 We describe here the background of this project and the current status of the technological and musical considerations required to achieve this event.
 
 \end{abstract}
@@ -37,7 +42,7 @@ We describe here the background of this project and the current status of the te
 
 \section{Drawsocket}
 The \drawsocket system consists of a Node.js server running inside a Max abstraction called hfmt.drawsocket.
-Using the NodeForMax environment, the server functions to relays messages from a Max patch to client browsers, routed to individually addressable channels based on the browsers' URL.
+Using the NodeForMax environment, the server functions to relays messages from a Max patch to client browsers, routed to individually addressable channels based on the browsers' URL. {\color{red} See our other paper}.
 The server uses the URL as an OpenSoundControl (OSC) address prefix, which tags messages with a target destination.
 When new drawing commands are received by the server, the commands are routed to the client browsers via WebSockets.
 On receiving new messages from the server, the client parses the data and uses it to produce new display information in the browser, using Scalable Vector Graphics (SVG) as the main display format.
@@ -45,13 +50,41 @@ The system also provides tools for animation of graphic elements, as well as use
 With this system in place, MaxScore connects through the hfmt.drawsocket Max abstraction to the client browsers, and then renders its score for each remote location based on the OSC address prefix.
 
 
+
+
+
+
 \input{maxscore-taiwan}
 
-\section{Setup in the Elbtunnel}
-The planned performance system for the Elbtunnel performance consists of a central server running the MaxScore/Drawsocket framework, and a set of \textcolor{red}{how many?} WIFI antennae.
+\section{Setup in the Elbe tunnel}
+The planned performance system for the Elbtunnel performance consists of a central server running the MaxScore/ Drawsocket framework, and eight Ubiquiti Unifi WIFI access points providing robust and redundant coverage within the tunnel. The APs will be connected to the network by switches linked via fiberoptic cables to overcome the limitations of current Ethernet cables.
 Each of the 144 performers will have a iPad mounted on a music stand, connected to a unique URL-OSC routing prefix (e.g. {/1}, {/2}, {/3}, ..., {/144} ). 
 
+There will be 4 concerts on two days with pieces written by established composers as well as HfMT multimedia students. The tunnel will be blocked off for the general public and the audience will be allowed to freely move around during the performance.
+
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{1.\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{Elbtunnel_GrundrissVers1.jpg} 
+       	\caption{Cross section and top view of the Old Elbe Tunnel. Eight access points will be spaced at regular distances, each providing coverage for 18 players.
+\label{fig:Elbtunnel_GrundrissVers1.jpg}}
+    \end{minipage}
+\end{figure*}
+
+
 \section{Future Work}
+We expect the Old Elbe Tunnel to be a test bed for situative performances of orchestral dimensions. This project will be further developed according to the following criteria: 
+1. The situative aspect: The system can be scaled to other outdoors and indoors settings with unique topologies. Once the system has proven its robustness, we will  most likely see more real-time and interactive uses.
+2. The assistive aspect: Allowing semi-professional and amateur musicians to participate in large-scale events with little prior orchestra experience. A transcription of Ligeti's Atmospheres into proportional notation, for instance, could leverage some of the difficulties reading the complex notation in rehearsals and concerts. The networked notation tool SmartVox by Jonathan Bell and Benjamin Matuszewski has already yielded excellent results working with amateur and student choirs. Cat Hope's opera Speechless is another case where a networked notation tool (Decibel Score Player) has been used in large scale performance.
+ 
+% @inproceedings{bell2017smartvox,
+%  title={SmartVox--a web-based distributed media player as notation tool for choral practices},
+%  author={Bell, Jonathan and Matuszewski, Benjamin},
+%  booktitle={Proceedings of the International Conference on Technologies for Music Notation and Representation-TENOR2017},
+%  pages={99--104},
+%  year={2017}
+%}
 
 
 \begin{acknowledgments}
