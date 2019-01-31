@@ -187,7 +187,7 @@ The main the client-side script is called \textit{drawsocket-client.js} and hand
 
 On load, the script first requests a new WebSocket connection to the server, using the browser's URL as the OSC prefix as the WebSocket identifier. On successful WebSocket connection, the script begins the clock synchronization process which runs in the background on the client system, requesting new clock readings from the server at regular intervals\footnote{Currently, the script is configured to check every 5 seconds, but this may change depending on performance on a larger scale system}. Once the initial clock synchronization is completed, the script sends an state initialization request to the server, to which the server responds with a sequence of commands corresponding to the current state of the given OSC prefix.
 
-The central command processing is performed in the \textit{processCmdObj} function, which parses an array of time-tagged command objects, and executes the corresponding graphic and sound manipulations in the browser. The \textit{processCmdObj} function expects one or more objects with a \textit{key}, \textit{val}, and \textit{timetag} key-value pairs:
+The central command processing is performed in the function \textit{drawsocket}, which parses an array of time-tagged command objects, and executes the corresponding graphic and sound manipulations in the browser. The \textit{drawsocket} function expects one or more objects with a \textit{key}, \textit{val}, and \textit{timetag} key-value pairs:
 
 \begin{lstlisting}[
   mathescape,
@@ -827,7 +827,7 @@ When the user's mouse or fingers move over the screen \drawsocket reports the $x
 \medskip
 \noindent
 \textbf{User defined event callbacks.}
-\drawsocket's \textit{processCmdObj} function can also be invoked from a callback function, to create interactive actions. For example, the following snippet, which creates an SVG path object, and assigns an \textit{onclick} callback function which triggers a sample playback when the client user clicks on the path object:
+The client-side \textit{drawsocket} function can also be invoked from a callback, for handling user interaction. For example, the following snippet, which creates an SVG path object, and assigns an \textit{onclick} callback function which triggers a sample playback when the client user clicks on the path object:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
 /*/svg : {
@@ -837,7 +837,7 @@ When the user's mouse or fingers move over the screen \drawsocket reports the $x
         /fill : "red"
     },
     /d : "M100,100a30,30,0,0,0,0-60a30,30,0,0,0,0,60",
-    /onclick : "processCmdObj({
+    /onclick : "drawsocket({
         key: 'sound',
         val: {
             id: 'kick',
