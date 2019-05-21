@@ -1,0 +1,252 @@
+{
+	"1" : [ 		{
+			"key" : "clear",
+			"val" : "*"
+		}
+, 		{
+			"key" : "svg",
+			"val" : [ 				{
+					"parent" : "main-svg",
+					"new" : "g",
+					"id" : "back"
+				}
+, 				{
+					"parent" : "main-svg",
+					"new" : "g",
+					"id" : "main"
+				}
+, 				{
+					"parent" : "main-svg",
+					"new" : "g",
+					"id" : "overlay"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "rect",
+					"id" : "_4",
+					"x1" : 20,
+					"y1" : 51,
+					"x2" : 0.6,
+					"y2" : 24,
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 0.4,
+						"stroke-opacity" : 1
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "music",
+					"id" : "_5",
+					"x" : 20,
+					"y" : 21,
+					"child" : "",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 0,
+						"stroke-opacity" : 1,
+						"font-family" : "Bravura",
+						"font-size" : 12
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "music",
+					"id" : "_6",
+					"x" : 25,
+					"y" : 21,
+					"child" : "",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 0,
+						"stroke-opacity" : 1,
+						"font-family" : "Bravura",
+						"font-size" : 8
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "text",
+					"id" : "_7",
+					"x" : 30,
+					"y" : 24,
+					"child" : "60",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 0,
+						"stroke-opacity" : 1,
+						"font-family" : "Arial",
+						"font-size" : 10
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "music",
+					"id" : "_8",
+					"x" : 22,
+					"y" : 69.959999084472656,
+					"child" : "",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 1,
+						"stroke-opacity" : 1,
+						"font-family" : "Bravura",
+						"font-size" : 24
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "text",
+					"id" : "_9",
+					"x" : -78.6953125,
+					"y" : 65,
+					"child" : "MaxScoreIns-0",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 1,
+						"stroke-opacity" : 1,
+						"font-family" : "Arial",
+						"font-size" : 10
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "music",
+					"id" : "_10",
+					"x" : 43,
+					"y" : 57,
+					"child" : "",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 1,
+						"stroke-opacity" : 1,
+						"font-family" : "Bravura",
+						"font-size" : 24
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "music",
+					"id" : "_11",
+					"x" : 43,
+					"y" : 69,
+					"child" : "",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "none",
+						"stroke-width" : 1,
+						"stroke-opacity" : 1,
+						"font-family" : "Bravura",
+						"font-size" : 24
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "path",
+					"id" : "_12",
+					"d" : "M20,75 L581.3215942382812,75",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "black",
+						"stroke-width" : 0.4,
+						"stroke-opacity" : 1
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "path",
+					"id" : "_13",
+					"d" : "M20,69 L581.3215942382812,69",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "black",
+						"stroke-width" : 0.4,
+						"stroke-opacity" : 1
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "path",
+					"id" : "_14",
+					"d" : "M20,63 L581.3215942382812,63",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "black",
+						"stroke-width" : 0.4,
+						"stroke-opacity" : 1
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "path",
+					"id" : "_15",
+					"d" : "M20,57 L581.3215942382812,57",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "black",
+						"stroke-width" : 0.4,
+						"stroke-opacity" : 1
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+, 				{
+					"parent" : "main",
+					"new" : "path",
+					"id" : "_16",
+					"d" : "M20,51 L581.3215942382812,51",
+					"style" : 					{
+						"fill" : "black",
+						"fill-opacity" : 1,
+						"stroke" : "black",
+						"stroke-width" : 0.4,
+						"stroke-opacity" : 1
+					}
+,
+					"transform" : "matrix(1,0,0,1,0,0)"
+				}
+ ]
+		}
+ ]
+}

@@ -4,23 +4,28 @@
 % paper title, authors
 \def\papertitle{drawsocket: A browser based system for networked score display%:  and the St. Pauli Elbtunnel project
 }
+
+\def\Hochschule {Hochschule f\"ur Musik und Theater}
+
 \def\firstauthor{Rama Gottfried}
 \def\secondauthor{Georg Hajdu}
 
-\def\Hochschule{ Hochschule f\"ur Musik und Theater}
 
 \title{\papertitle}
  \twoauthors
    {\firstauthor} {	
       Hochschule f\"ur Musik und Theater\\
-         Hamburg, Germany \\ %
+        Hamburg, Germany \\ %
    \small{\tt \href{mailto:rama.gottfried@hfmt-hamburg.de}{rama.gottfried@hfmt-hamburg.de}}}
     {\secondauthor} {
    Hochschule f\"ur Musik und Theater\\
    Hamburg, Germany \\ %
    \small{\tt \href{mailto:georg.hajdu@hfmt-hamburg.de}{georg.hajdu@hfmt-hamburg.de}}}
+
+
  
 % other setup
+
 \input{tenor19-setup}
 
 % ------ Start of Document -----
@@ -33,17 +38,16 @@
 \capstarttrue
 %
 \begin{abstract}
-We present \drawsocket, a new platform for generating synchronized, browser-based displays across an array of networked devices developed at the \Hochschule, Hamburg. Conceived as a system for distributed notation display with applications in music and spatial performance contexts, \drawsocket provides a unified interface for controlling diverse functions running in client browsers. 
-In addition, \drawsocket provides tools which allow the system to be extended for realtime user interaction.
+We present \drawsocket, a new platform for generating synchronized, browser-based displays across an array of networked devices developed at the \Hochschule, Hamburg. 
+Conceived as a system for distributed notation display with applications in music and spatial performance contexts, \drawsocket provides a unified interface for controlling diverse media features of web-browsers which can be utilized in many ways.
+By providing access to browser mouse and multitouch gesture data, and the ability to dynamically create user-defined callback methods, the \drawsocket system aims to provide a flexible tool for creating graphical user interfaces.
 Included is a discussion of the architecture design and development process, followed by an overview of the features, and syntax considerations for the \drawsocket API.
 
 \end{abstract}
 
-%\input{intro-foundations.tex}
-
 \section{drawsocket}\label{sec:drawsocket}
-The \drawsocket design approach is based on the ``o.io'' paradigm developed at the University of California, Berkeley's Center for New Music and Technology (CNMAT), which uses the OpenSoundControl (OSC) encoding~\cite{wright:osc} to create a uniform user application programing interface (API) by ``wrapping'' vendor- and protocol-specific details in an interoperable API syntax~\cite{freed2014io, maccallum2015dynamic}.
-In this way, the \drawsocket system aims to be an ``o.io'' wrapper for web browser display and interaction, providing an OSC API for manipulating the display building blocks of Scalable Vector Graphics (SVG),\footnote{https://www.w3.org/TR/SVG11/} Cascading Style Sheets (CSS),\footnote{https://www.w3.org/Style/CSS/specs.en.html} HyperText Markup Language (HTML),\footnote{https://www.w3.org/TR/html52/} and a curated collection of client-based JavaScript libraries for animation and sound production.
+The \drawsocket design approach is based on the ``o.io'' paradigm developed at the University of California, Berkeley's Center for New Music and Technology (CNMAT), which uses the OpenSoundControl (OSC) encoding~\cite{wright:osc} to create a uniform user application programing interface(API) by ``wrapping'' vendor- and protocol-specific details in an interoperable API syntax~\cite{freed2014io, maccallum2015dynamic}.
+In this way, the \drawsocket system is an ``o.io'' wrapper for web browser display and interaction, aiming to provide a homogenous OSC API for manipulating the graphic building blocks of Scalable Vector Graphics (SVG),\footnote{https://www.w3.org/TR/SVG11/} Cascading Style Sheets (CSS),\footnote{https://www.w3.org/Style/CSS/specs.en.html} HyperText Markup Language (HTML),\footnote{https://www.w3.org/TR/html52/} and a curated collection of client-based JavaScript libraries for animation and sound production.
 
 \begin{figure*}[]
 \centering
@@ -53,10 +57,12 @@ In this way, the \drawsocket system aims to be an ``o.io'' wrapper for web brows
 \end{figure*}
 
 \subsection{Architecture Overview}
-The \drawsocket architecture is structured as a server-client system, using Max\footnote{https://cycling74.com}  as the primary controller interface, to send drawing messages via a Node.js\footnote{https://nodejs.org} server, with then routes control messages to the client web browser, which parses the messages, and uses the data to generate content in the client browser. 
+The \drawsocket architecture is structured as a server-client system, using Max\footnote{https://cycling74.com} as the primary controller interface. 
+From Max, control messages are sent to specified client browsers via a Node.js\footnote{https://nodejs.org} server, which routes the messages by a given client addresses.
+The messages are then parsed and executed in the client-browser, to generate content or perform other actions.
 
-The choice of Node.js was particularly helpful due to the Node Package Manager (NPM), which is bundled with Node.js, allowing \drawsocket to leverage the active community of Javascript library development of tools for browser-based display and inter-computer communication \cite{trockman2018adding}. 
-Further, NPM also provides a practical method for managing libraries dependancies, via the \textit{package.json} system.
+The choice of Node.js for the server backend was particularly helpful due to the Node Package Manager (NPM), which is bundled with Node.js, allowing \drawsocket to leverage the active community of Javascript library development of tools for browser-based display and inter-computer communication \cite{trockman2018adding}. 
+Further, NPM provides a practical method for managing libraries dependancies, via the \textit{package.json} system.
 
 In an effort to scale to larger groups of clients running off of the same server, a loosely defined \textit{model-view-controller} \cite{krasner1988description} pattern is used to separate the processes. 
 The server is used primarily to relay and cache the drawing commands, while the drawing implementation is offloaded to the client browsers, which with recent developments in mobile computing have become quite efficient~\cite{halpern2016mobile}.
@@ -70,16 +76,16 @@ Since the release of Max 8, Max now includes the Node For Max (N4M)\footnote{htt
 
 The first versions of the \drawsocket system used an independent Node.js application running from the command prompt and a User Datagram Protocol (UDP)\footnote{https://tools.ietf.org/html/rfc768} socket to send and receive OSC bundles to and from Max, which were then broadcast to subscribed clients.
 However, after comparing benchmarks measuring the roundtrip messaging time between Max and node.js, the N4M system was found to be faster, and so we adopted this platform as the primary use case.
-\drawsocket system is well compartmentalized, and so could still easily be reconfigured to use UDP input for use with other control software.
+However, the \drawsocket system is well compartmentalized, and so could still easily be reconfigured for use with other control applications.
 
 Within Max, the core Node.js server script, \textit{drawsocket-server.js}, is run within Max's \textit{node.script} object. 
-For convenience, the node.script object is wrapped in Max abstraction called \textit{hfmt.drawsocket} which aids in API syntax formatting, managing server asset paths, and handles user interaction messages returning from the client (see section~\ref{sec:setup} for more details).
+For convenience, the node.script object is wrapped in Max abstraction called \textit{hfmt.drawsocket} which aids in managing server asset paths, and handles user interaction messages returning from the client (see section~\ref{sec:setup} for more details).
 
 \medskip
 \noindent
 \textbf{OSC-JSON representation.}
 The \drawsocket data is formatted as a key-value tree, which in Max can be represented as either OSC, or in Max Dictionary format,
-both of which can easily transformed to JavaScript Object Notation (JSON).\footnote{https://www.json.org/} See section~\ref{sec:api} below for an in-depth description of the \drawsocket messaging syntax.
+both of which can be easily transformed to JavaScript Object Notation (JSON).\footnote{https://www.json.org/} See section~\ref{sec:api} below for an in-depth description of the \drawsocket messaging syntax.
 
 \subsection{Server}
 \noindent
@@ -90,9 +96,9 @@ The Node.js server consists of four main processes: (1) an Express HTTP server,\
 \noindent
 \textbf{Express.}
 The Express JS library is used to create the web server and handle HyperText Transfer Protocol (HTTP)\footnote{https://www.w3.org/Protocols/} requests from client browsers. 
-By default, the server responds to all page requests with a set of default HTML files which contain the basic setup necessary for most uses of the \drawsocket system, and links to dependency JS libraries, fonts, and a default CSS stylesheet.
+By default, the server responds to all page requests with a default HTML file which contain the basic setup necessary for most uses of the \drawsocket system, with links to dependency JS libraries, fonts, and a default CSS stylesheet.
 
-From the Max interface, users can send the \textit{html\_template} message set a different default HTML page if desired.
+If a custom HTML page is desired, users can send the \textit{html\_template} message from the Max interface, to set a new default HTML file.
 
 The Express server uses a static public root folder, which exposes a selected folder path that client browsers may load files from. 
 To set the root public folder, users can set the \textit{html\_root} folder path as an initialization argument to the \textit{hfmt.drawsocket} abstraction.
@@ -103,18 +109,17 @@ User configuration of the system is described further in section~\ref{sec:setup}
 \noindent
 \textbf{WebSockets.}
 WebSockets are used as the primary server-client communication exchange protocol.
-The server accepts WebSocket requests from client browsers with a valid OSC prefix URL.
+The server accepts WebSocket requests from client browsers, and subscribes clients to receive messages addressed to their browser's URL (Uniform Resource Locator).
 
-Control messages composed in Max are received in JSON format by the server, and routed the client identified by the corresponding OSC address prefix, defined by the client browser's URL address.
+Control messages composed in Max as an OSC bundle or Max Dictionary are received in JSON format by the server, and routed to the clients identified by their corresponding URL web-address.\footnote{https://www.w3.org/Addressing/URL/url-spec.txt}
 
 \medskip
 \noindent
-\textbf{OSC prefix state caching.}
-On connection to a new OSC prefix, the server adds the prefix to its list of known client prefixes, and begins logging the prefix state in the server's state caching system. 
-Every control command received and routed to a known client OSC prefix, is then timestamped, and stored in an internal state storage object array.
+\textbf{URL state caching.}
+Upon receiving control messages addressed to a new URL, the server first forwards the messages via WebSocket to the specified URL address, and then sends a copy of the message to the sate cache system.
 
-Users may pre-initialize a set of OSC prefixes that will be tracked by the state caching system, using the \textit{addprefix} message from Max.
-This provides a mechanism for preloading a set of drawing commands to a OSC prefix, so that when a user first loads the page, or hits refresh, the current drawing state of the page will be loaded.
+On connection to a new WebSocket, the client requests the current state of its URL from the server cache.
+This provides a mechanism for preloading a set of drawing commands to a given URL, so that when a user first loads the page, or hits refresh, the current drawing state of the page will be loaded.
 
 \medskip
 \noindent
@@ -133,8 +138,9 @@ Running inside a web browser, the client-side component of the \drawsocket syste
 \medskip
 \noindent
 \textbf{Web browser.}  
-Currently the system targets Safari and Chrome. 
-Firefox support is currently out of sync with the other browsers, but will be supported. Other browsers will most likely work, but are not currently being tested.
+Currently the system targets Safari and Chrome.
+At the current time of writing, Firefox SVG 2 feature support is behind the above two.
+Other browsers will most likely work, but are not currently being tested. 
 
 \medskip
 \noindent
@@ -183,9 +189,9 @@ Users may also create new SVG groups and add elements to these new groups, to co
 \medskip
 \noindent
 \textbf{Client-side Script.} 
-The main the client-side script is called \textit{drawsocket-client.js} and handles the main drawing and command processing logic of the system.
+The client-side script running in the browser is called \textit{drawsocket-client.js}, which handles the command processing logic of the system and its execution in the browser.
 
-On load, the script first requests a new WebSocket connection to the server, using the browser's URL as the OSC prefix as the WebSocket identifier. On successful WebSocket connection, the script begins the clock synchronization process which runs in the background on the client system, requesting new clock readings from the server at regular intervals\footnote{Currently, the script is configured to check every 5 seconds, but this may change depending on performance on a larger scale system}. Once the initial clock synchronization is completed, the script sends an state initialization request to the server, to which the server responds with a sequence of commands corresponding to the current state of the given OSC prefix.
+On load, the script first requests a new WebSocket connection to the server using the browser's URL address, sent to the server via the the WebSocket URL identifier (e.g. \textit{ws://localhost:3002/violin}). On successful WebSocket connection, the script begins the clock synchronization process which runs in the background on the client system, requesting new clock readings from the server at regular intervals\footnote{Currently, the script is configured to check every 5 seconds, but this may change depending on performance on a larger scale system}. Once the initial clock synchronization is completed, the script sends a state initialization request to the server, to which the server responds with a sequence of commands corresponding to the current state of the given client OSC address.
 
 The central command processing is performed in the function \textit{drawsocket}, which parses an array of time-tagged command objects, and executes the corresponding graphic and sound manipulations in the browser. The \textit{drawsocket} function expects one or more objects with a \textit{key}, \textit{val}, and \textit{timetag} key-value pairs:
 
@@ -204,13 +210,13 @@ Generally, these objects are formatted in the Node.js server from the API comman
 
 %%%%%%%% User Setup
 \section{Drawsocket User Setup}\label{sec:setup}
-The interface for \drawsocket is designed for use in the context Max, and is distributed as a Max Package called ``hfmt.drawsocket'', currently hosted on GitHub at the following url:
+The interface for \drawsocket is designed for use in Max, and is distributed as a Max Package, currently hosted on GitHub at the following url:
 
-\textit{https://github.com/ramagottfried/hfmt-drawsocket}
+\textit{https://github.com/HfMT-ZM4/drawsocket}
 
-To install, users download the hfmt.drawsocket repository and place it in Max's Packages folder. Once installed, users can instantiate the \drawsocket system by placing the hfmt.drawsocket object in a Max patch.
+To install, users download the repository and place it in Max's Packages folder. Once installed, users can instantiate the \drawsocket system by creating a hfmt.drawsocket object in a Max patch.
 
-The dependency NPM libraries are not distributed with the package, so on first loading hfmt.drawsocket, you must first send the object the \textit{script NPM install} message, which asks NPM to download all of the dependencies listed in the node project's \textit{packages.json} file.\footnote{The node project is located in the package's /code/node folder, and includes all scripts, and configuration files.}
+The dependency NPM libraries are not distributed with the package, so on first loading hfmt.drawsocket, you need to send the object the \textit{``script npm install''} message, which asks NPM to download all of the dependencies listed in the node project's \textit{packages.json} file.\footnote{The node project is located in the package's /code/node folder, and includes all scripts, and configuration files.}
 
 \medskip
 \noindent
@@ -220,7 +226,7 @@ Custom HTML pages, and/or other types of assets can also be served to the client
 The public root folder is a method commonly used to control client access to server folders, and can be set in Max by supplying the relative path to the user's Max patch\footnote{Note that the Max patch must be saved to disk before it will have a valid folder path.} as an argument to the hfmt.drawsocket object.
 This system allows users to organize their project in a mobile way, easily moved or installed on a new system.
 
-Within the hfmt.drawsocket abstraction there is a helper script called \textit{startscript.js} which retrieves the user patcher's folder path, and passes the path configuration as an argument to the node.script object start message. 
+Within the hfmt.drawsocket abstraction there is a helper script called \textit{startscript.js} which retrieves the user patcher's folder path, and passes the path information as an argument to the node.script object on startup.\footnote{Note that this requires the user patcher to be saved to disk first, so that it has a valid folder location.}
 By default the folder containing the user's patch is used as the root public folder, however, users may wish to choose a different folder. 
 For example, by setting the path ``public\_html'', \drawsocket will expect a folder called ``public\_html'' to be located in the same folder as the Max patch running the hfmt.drawsocket abstraction, and if found will use this folder as the public root folder.
 
@@ -235,46 +241,43 @@ The API was initially designed in keeping with the conventional ``message'' form
 A Max message is structured as an array, beginning with a selector string, followed by a list of values, which is interpreted by the receiver based on a preexisting schema.
 However, as more features were added, some complications arose in regard to the sequence ordering, and as a result an alternative object-oriented API was developed, which makes use of a key-value approach that has proven more extendable for the \drawsocket system (discussed below in section~\ref{sec:objstyle}).
 
-Due to the requirements of the state caching system, it eventually emerged that the user API syntax should be separate from the internal format used to store the prefix states.
-As a result, a new script was added to the hfmt.drawsocket abstraction which translates from the user interface API to the lower-level server message syntax.
-Therefore the API could also be altered to serve users needs in the future, wrapping the low level API in high level control syntax.
-
 Note that in the discussion below, we use the term \textit{message} as a general purpose term for communication via message events, which could be in different formats (OSC messages, Max messages, JSON objects sent as messages, etc.).
 
 
 \medskip
 \noindent
-\textbf{OSC prefix routing.}  
-All messages sent from the server, are prefixed by the client's OSC prefix, which is used to route messages to the appropriate clients. 
+\textbf{URL address routing.}  
+All messages sent to the server are addressed to a URL, which is used by the server to route messages to the appropriate clients. 
 Multiple clients may be logged into the same URL, in which case they would all receive the same drawing commands. 
 For example if you had a group of violins all playing the same part you could have them log into the URL:
 
 \textit{http://server.ip.address:port/violin1}
 
-Then to send messages to the violin 1 section, you would prefix the drawing message with \textit{/violin1}.
+Then to send messages to the violin 1 section, you would use the URL address \textit{/violin1}, in the same way you wold use an OSC address.
 
-To send to all clients, regardless of OSC prefix, \drawsocket provides usage of the OSC \textit{/*} wildcard address.
+To send to all clients, regardless of URL address, \drawsocket provides usage of the OSC \textit{/*} wildcard address.
 
 Note that in OSC, \textit{/*} matches one single address level, whereas the \drawsocket server uses the wildcard address to match any \textit{URL}, which may include multiple slashes.
-To avoid confusion with OSC convention, it is strongly recommended to use single level addresses (i.e. use \textit{/violin1}, not \textit{/violin\textbf{/}1} in cases of indexed subgroupings).
+To avoid confusion with OSC convention, it is strongly recommended to use single level addresses (i.e. use \textit{/violin1}, not \textit{/violin\textbf{/}1} in cases of indexed sub-groupings).
 
 \medskip
 \noindent
 \textbf{Object references.} 
-\drawsocket uses the Document Object Model (DOM)\cite{Champion:04:DOM} \textit{id} attribute as the primary mechanism for references individual client objects from the server.
-On creation, the client-side script logs a reference to new objects with their unique id, in a set of associative arrays which can be used for fast object lookup by name. 
-Through this method, objects may be referred to by name, modified, styled, transformed, or removed.
+\drawsocket uses the Document Object Model (DOM)\cite{Champion:04:DOM} \textit{id} attribute as the primary mechanism for referencing individual client objects from the server.
+On creation, the client-side script logs a reference to new objects with their unique ID, in a set of associative arrays which can be used for fast object lookup by name. 
+Through this method, objects may be referred to by ID, modified, styled, transformed, or removed.
 
 SVG and HTML nodes use the provided unique identifier as the node's \textit{id} attribute, as per the DOM standard, while other objects such as GSAP animation or Tone.js sound objects are not in the DOM, but logged in the \drawsocket's internal object model.
 
-By using the DOM id attribute, \drawsocket is able to make use of CSS selectors, which opens up other many possibilities for object manipulation and grouping through CSS classes.
-
 \subsection{List-oriented API}\label{sec:maxstyle}
 The original ``Max style'' list-oriented  \drawsocket API design used a bundle of individual OSC messages, each of which performed an action on the client system. 
-The list-oriented API has now been replaced, however a discussion of this approach is valuable, since it illustrates a structural limitation that we encountered with this formatting approach.
+The list-oriented API has now been replaced, however a discussion of this approach is valuable, since it illustrates a structural limitation that we encountered with this syntax approach.
 
-In the list-oriented API, the OSC message's address was used to specify several functional layers at once, concatenated together into one slash separated address: (1) the client OSC prefix, (2) the unique object ID which refers to the object in the client's object lookup system, followed by (3) the command string.
-The value of the OSC message was an array of values which wrapped the native SVG or other object models on the client with a simplified set of user accessible parameters. For example the following OSC bundle:
+In the list-oriented API, the OSC message address was used as a way to specify several functional layers at once, through concatenating together multiple values separated by slashes. The general address syntax was made of three main levels: (1) the client URL address, (2) a unique object ID, followed by (3) a command string specifying the process to execute on the client system.
+
+The commands provided a streamlined way to create and modify elements on the client browser, using a curated set of parameters. 
+
+For example the following OSC bundle:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
     {
@@ -284,7 +287,8 @@ The value of the OSC message was an array of values which wrapped the native SVG
 \end{lstlisting}
 
 \noindent
-contains two messages prefixed by \textit{/violin} which indicates that the server should send these commands to all clients logged into the \textit{/violin} URL. \footnote{Internally, the server strips off the OSC prefix level from the address, passing on the remaining address levels.} 
+contains two messages prefixed by \textit{/violin} which indicates that the server should send these commands to all clients logged into the \textit{/violin} URL.
+
 Once received on the client system, the script would parse the OSC address, separating the ID from the command string. 
 Here, the ID is ``foo'' and the command string is ``draw/rect''.
 
@@ -296,10 +300,10 @@ The second message works in a similar way, except that rather than creating a ne
 \noindent
 \textbf{Grouping.} 
 Things start to get a little more complex with the list-oriented approach when attempting to define SVG group objects and object definitions. 
-In these cases child objects can be grouped together and manipulated as a single graphic object, while not requiring each child object to have a unique id.
+In these cases child objects can be grouped together and manipulated as a single graphic object, while not requiring each child object to have a unique ID.
 
 The first problem we encountered was when trying to include two objects of the same type within the object. 
-In the first implementation, a sub-bundle of OSC messages was used to group elements together, however since no ids were required, the following example fails:
+In the first implementation, a sub-bundle of OSC messages was used to group elements together, however since no IDs were required, the following example fails:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
     /*/groupex/draw/group : {
@@ -325,51 +329,56 @@ To address these two issues, the list-oriented grouping syntax was adapted to us
 \end{lstlisting}
 
 \noindent
-In this case, the \textit{/style} message is bound to the \textit{/path} message by wrapping them together in an object. 
+In this case, the \textit{style} message is bound to the \textit{path} message by wrapping them together in an object. 
 This solution led to a reevaluation of the \drawsocket API syntax, and resulted in the development of the object-oriented based API.
 
 \subsection{Object-oriented API}\label{sec:objstyle}
-While the list-oriented approach provides a compact, one-line syntax, this formatting approach also by nature limited, in that the list requires a predefined schema for how the list can be interpreted, and which types of operations the list values may address. 
+While the list-oriented approach provides a compact, one-line syntax, the list format is also limited, in that the list requires a predefined schema for how the list can be interpreted, and which types of operations the list values may address. 
 The list-based approach is thus less easily extendable, since adding a new value to the list requires adding a new step in the interpreting script.
-The main benefit of the list syntax is that its compactness makes it sometimes faster for rapid prototyping, however the object-oriented approach can be more easily expanded since the self-describing key-value format allows the receiver to map the input data to a wider set of possibilities.
+The main benefit of the list syntax is that its compactness makes it sometimes faster for rapid prototyping, however the object-oriented approach can be more easily expanded as we will show below, and additionally, the object-oriented approach is helpful since it is self-describing, emphasizing legibility by associating a parameter name with each value.
 
 %The ``object-array'' API uses an array of objects which are processed in a similar way to the ``list-oriented'' API, except that rather than concatenating the sequence of \textit{id}, \textit{command}, and associated generic list of values that need to fit a certain order to be interpreted correctly by the client-side script, the object-oriented approach groups all parameters together in an object and provides separate identifiers for each element. 
 
-For example, whereas above we drew a line with a list, such as:
+For example, whereas above we drew a rectangle with a list, such as:
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
   /violin/foo/draw/rect : [100, 100, 25, 25]
 \end{lstlisting}
 
 \noindent
-The same line could be drawn with the object-based API which uses the \textit{/svg} message, where the \textit{/new} keyword notifies the client that it should create a new SVG element:
+The same rectangle could be drawn with the object-based API using the ``svg'' \textit{key}, and an \textit{val} containing one or more objects to process. The \textit{``new''} keyword notifies the client that it should create a new SVG element:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/svg : {
-      /new : ``rect'',
-      /id : ``foo'',
-      /x : 100,
-      /y : 100,
-      /width : 25,
-      /height: 25
+  /violin : {
+    /key : "svg",
+    /val : {
+        /new : ``rect'',
+        /id : ``foo'',
+        /x : 100,
+        /y : 100,
+        /width : 25,
+        /height: 25
+      }
   }
 \end{lstlisting}
 \end{minipage}
 
 \noindent
-We can see that in the object-based approach each variable now has a key value, telling us what the variable represents.
+In the object-based approach each variable now has a name associated with its value, telling us what the variable represents.
 The list-approach is a more concise, requiring less typing, however, when we consider further what the messages are representing in the context of the \drawsocket system, the benefit of the object approach becomes clearer.
 
-SVG, an XLM-based format, is designed as tree of \textit{nodes}, each with a set of \textit{attributes} which are defined as key-value pairs.
+SVG is based on the Extensible Markup Language (XML)\footnote{https://www.w3.org/TR/xml/} format, and is designed as tree of \textit{nodes}, each with a set of \textit{attributes} which are defined as key-value pairs.
 By using the same attribute names within the \drawsocket object API, the client script can then simply insert as few or many of the attributes as it receives, rather than needing a specific set of attributes, as with the list-based approach.
 Also, by staying close to the original SVG API, the user can refer to the SVG specification directly to figure out which attributes they can use, rather than needing to limit their control parameters to those setup in the list parsing schema.\footnote{That said, we have not yet fully tested the entire SVG specification. We believe the object API provides access to everything, but there maybe some unaddressed aspects.} 
 
 
-For example, extending the above example, we can use the object approach to add a new CSS \textit{class} reference:
+For example, extending the above example, here we create two new objects, a rectangle and a circle, by defining them in an array, and additionally assign a CSS \textit{class} reference for each:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/svg : {
+  /violin : {
+    /key : "svg",
+    /val : [{
       /new : ``rect'',
       /id : ``foo'',
       /x : 100,
@@ -377,48 +386,58 @@ For example, extending the above example, we can use the object approach to add 
       /width : 25,
       /height: 25,
       /class : ``room''
+    }, {
+      /new : ``circle'',
+      /id : ``bar'',
+      /cx : 112,
+      /cy : 112,
+      /r : 5,
+      /class : ``source'
+    }]
   }
 \end{lstlisting}
 \end{minipage}
 
-%The \drawsocket object API uses the native SVG attributes by name as per the SVG specification, with the addition of the \textit{/new} keyword.
+%The \drawsocket object API uses the native SVG attributes by name as per the SVG specification, with the addition of the \textit{new} keyword.
 
 \medskip
 \noindent
 \textbf{Keywords.} 
-There are currently four reserved keywords used with the \textit{/svg} object array: \textit{/new}, \textit{/style}, \textit{/parent}, and \textit{/child}.
+There are currently four reserved keywords used with \textit{svg} objects: \textit{new}, \textit{style}, \textit{parent}, and \textit{child}.
 
-On receiving a \textit{/svg} object (or array of objects), the client-side script iterates each element of the array, and checks if there is an \textit{/id} tag; if so, it selects that element from the DOM lookup table.
-Next, the script checks if there is a \textit{/new} message in the object; if so, it creates a new node, either replacing the element at the existing \textit{/id}, or creating a new node if not already existing, and then processes the rest of the object messages.
+On receiving an \textit{svg} object (or array of objects), the client-side script iterates each element of the array, and checks if there is an already existing object with that \textit{id} tag; if so, it selects that element from the DOM lookup table.
+Next, the script checks if there is a \textit{new} message in the object; if so, it creates a new node, either replacing the element at the existing \textit{id}, or creating a new node if not already existing, and then processes the rest of the object messages.
 
-%This is also convenient, because it means the order of the element is not important.
-%Additionally, with the object based method, the script does not make any assumptions about the attributes that the user sets in the SVG node.
-%Rather than needing to know the order of elements in a list designed by the script author, the user can refer to the official SVG specification, and make use of a larger set of possible attributes and operations
-Elements may also be partially updated by this method, for example if after sending the above object array, creating the objects ``foo'' and ``bar'', sending the message:
+If the object already exists, and no \textit{new} is found, \drawsocket will use the values in the object to update the object attributes. For example:
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/svg : {
+/violin : {
+    /key : "svg",
+    /val : {
       /id : ``foo'',
       /width : 100
-  }
-  \end{lstlisting}
+    }
+}
+\end{lstlisting}
 \end{minipage}
 
 \noindent
-will set only the \textit{/width} attribute of the node ``foo''.
+will change the \textit{width} attribute of the node ``foo'' without modifying any other attributes that may have already been set.
 
-\subsection{Parent and Child Elements}\label{sec:parent}
-Appending child nodes to parent SVG element can be accomplished via the \textit{/parent} and \textit{/child} keywords.
+\subsection{Parent and child elements}\label{sec:parent}
+Appending child nodes to parent SVG element can be accomplished via the \textit{parent} and \textit{child} keywords.
 
-The \textit{/child} keyword, is a high-level API helper function that assists the user in specifying one or more child nodes in a tree syntax.
+The \textit{child} keyword, is a high-level API helper function that assists the user in specifying one or more child nodes in a tree syntax.
 The value attached to this address will be inserted as a child of the parent node, for example the inner text of a \textless text\textgreater element, or a new node within a \textless g\textgreater the SVG grouping element tag.
 
 Here is an example of a circle and line contained in new SVG group, called ``noteline'':
 
 % osc data formating
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-   /violin/svg : {
+/violin : {
+    /key : "svg",
+    /val : {
         /new : ``g'',
         /id : ``noteline'',
         /x : 100,
@@ -445,21 +464,20 @@ Here is an example of a circle and line contained in new SVG group, called ``not
       		/stroke : ``black''
       	    }
         }]
-    }
+     }
+  }
 \end{lstlisting}
 
-The tree syntax is supported as part of the high-level API, however internally, the API translation script flattens the tree into an array of nodes. 
-If an \textit{/id} value is found, the node is considered to be a top-level element which can be updated by reference to its unique name, if no \textit{/id} is found the node is considered a dependent of the parent node and is not updatable in the server cache system.
-The API syntax reformatting script internally moves child nodes with \textit{/id} values to its main array of SVG element, and inserts a \textit{/parent} reference attribute.
-
-Nodes with a \textit{/parent} attribute are inserted as children of the node with the \textit{/id} specified by the \textit{/parent}, as long as the parent element is already existing in the DOM.
-If no \textit{/parent} element is specified, the node is inserted into the default SVG group ``main-svg''.
+Nodes with a \textit{parent} attribute are inserted as children of the node with the \textit{id} specified by the \textit{parent}, as long as the parent element is already existing in the DOM.
+If no \textit{parent} element is specified, the node is inserted into the default SVG group ``main-svg''.
 
 \begin{minipage}{\linewidth}
 For example, the above tree syntax could also be written this way:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-   /violin/svg : [{
+ /violin : {
+    /key : "svg",
+    /val : [{
         /new : ``g'',
         /id : ``noteline'',
         /x : 100,
@@ -488,52 +506,56 @@ For example, the above tree syntax could also be written this way:
             /stroke : ``black''
         }
     }]
+ }
 \end{lstlisting}
 \end{minipage}
 
 
 \subsection{SVG layer drawing contexts}\label{sec:contexts}
-In an SVG file, each object element is drawn in the same order as they are written in the file, from top to bottom, with the last element being drawn last, and therefore on the top layer.
-In the \drawsocket system, the drawing order is set via the node creation (using the \textit{/new} keyword).
+In an SVG file, each object element is drawn in the same order as they are written in the file, from top to bottom, with the last element being drawn last, ``on top'' of any objects that may have been drawn in the same location.
+In the \drawsocket system, the drawing sequence is set through the order of the object creation (using the \textit{new} keyword).
 
-Using the \textit{/parent} and \textit{/child} keywords, new nodes can be created and inserted as children of existing nodes.
+Using the \textit{parent} and \textit{child} keywords, new nodes can be created and inserted as children of existing nodes.
 The order in which the child nodes are created, sets the drawing order of the nodes.
-However, \textit{editing} nodes (i.e. setting values without the use of the \textit{/new} keyword), does \textit{not} change the drawing order.
+Importantly, \textit{editing} nodes (i.e. setting values without the use of the \textit{new} keyword), does \textit{not} change the drawing order.
 Similarly, inserting nodes does not change the drawing order of the parent nodes.
 This rule makes it possible to use SVG groups as drawing layer contexts, which maintain stacking order relative to each other.
-The high-level API also provides a tree model utility keyword called \textit{/appendTo}, which assists in assigning one or more nodes to a parent node.
 
 As an illustration, let's say you would like to have three layers, a background, middle and overlay. 
 You could create three new groups within the main SVG node, called ``back'', ``main'', and ``overlay'', in a specific drawing order, like this:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-   /violin/svg : [{
+ /violin : {
+    /key : ``svg'',
+    /val : [{
        /new : ``g'',
        /id : ``back''
-   }, {
+     }, {
        /new : ``g'',
        /id : ``main''
-   } , {
+    } , {
        /new : ``g'',
        /id : ``overlay''
    }]
+ }
 \end{lstlisting}
 
-You could then use the  \textit{/appendTo} high-level keyword to append nodes to the groups like this:
+You could then use the \textit{parent} keyword to append nodes to the newly created groups. New nodes are draw above older nodes, but since the groups maintain their drawing order, you can use them as layers. In this example, the ``overlay'' layer, will always be drawn after the ``back'' and ``main'' layer-groups.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /*/svg : {
-      /appendTo : {
-        /main : {
+  /* : {
+        /key : ``svg'',
+        /val : [{
+            /parent : ``main'',
             /id : "clef",
             /new : "text",
             /child : "&#xE050",
             /class : "bravura_text",
             /x : 40,
             /y : 50
-        },
-        /back : {
+        }, {
+            /parent : ``back'',
             /new : "rect",
             /id : "rect",
             /x : 5,
@@ -541,33 +563,27 @@ You could then use the  \textit{/appendTo} high-level keyword to append nodes to
             /width : 100,
             /height : 100,
             /fill : "red"
-        },
-        /overlay : {
+        }, {
+            /parent : ``overlay'',
             /new : "circle",
             /id : "circle",
             /cx : 50,
             /cy : 50,
             /r : 10,
             /fill : "blue"
-        }
-     }
+        }]
   } 
 \end{lstlisting}
 \end{minipage}
 
-As with the above discussion of the \textit{/child} keyword, the API translation script will convert the parent nodes specified with the \textit{/appendTo} tag as \textit{/parent} values.
-
 Using this approach, multiple layers of SVG elements can be grouped together and manipulated (with some limitations as described in the SVG specification).
 
 \subsection{SVG CSS Styling.} 
-The ability to dynamically apply CSS styling operations on SVG elements provides the user with an extremely flexible mechanism for composing, and animating graphic layout.
-This functionality comes ``for free'' since it is used ubiquitously for web design across the internet.
-
+The ability to dynamically apply CSS styling operations on SVG elements provides the user with an extremely flexible mechanism for composing, and manipulating the graphic layout.
 For most common \drawsocket usages, a set of default layout properties are defined in the file \textit{drawsocket-default.css}, which is loaded with the default HTML file (\textit{drawsocket-page.html}).
+The linked stylesheet sets some defaults for SVG element types, for example \textit{lines} have a default stroke width value so that they are visible by default.\footnote{Note that this is not always desirable, for example when importing SVG files exported by a program like Adobe Illustrator, which assumes that there are no pre-exiting CSS rules in place. For these cases, \drawsocket users can either override the defaults via a new CSS definition, or change the .css file by hand.}
 
-The linked stylesheet sets some defaults for SVG element types, for example \textit{lines} have a default stroke width value so that they are visible by default.
-
-\drawsocket also provides dynamic access to CSS settings, for which it is useful to understand the hierarchy of SVG style properties. 
+\drawsocket also provides dynamic access to CSS rules, for which it is useful to understand the hierarchy of SVG style properties. 
 
 There are three levels of inheritance with SVG CSS styling: 
 
@@ -575,7 +591,7 @@ There are three levels of inheritance with SVG CSS styling:
 
 \textit{\textless rect~fill=``red''~\textgreater}; 
 
-(2) \textit{stylesheet} definitions, set in an attached CSS stylesheet, or within an \textless style\textgreater element;
+(2) \textit{stylesheet} definitions, loaded via an attached CSS stylesheet document, or within an \textless style\textgreater element within the HTML document;
 and
 
 (3) \textit{inline styling}, a snippet of CSS wrapped in a string and set in an elements's \textit{style} attribute, e.g.:
@@ -585,12 +601,14 @@ and
 Each is overridden by the next: stylesheets override presentation attributes, and inline styles override all the others.\footnote{With one exception, stylesheet definitions with the \textit{!important} tag will override inline styles.} 
 
 Using CSS \textit{class} selector syntax opens up many possibilities.
-For example, here is an example using the object-array syntax to set create two CSS classes: (1) ``.notehead'' which sets defaults for fill and stroke properties, as well as the radius value, \textit{/r} ; and (2) ``.notehead.open'', a sub-class of ``.notehead'' which overrides the fill property. 
+For example, here is an example using the object-array syntax to set create two CSS classes: (1) ``.notehead'' which sets defaults for fill and stroke properties, as well as the radius value, \textit{r} ; and (2) ``.notehead.open'', a sub-class of ``.notehead'' which overrides the fill property. 
 
-Following the \textit{/css} definitions, a new SVG circle object is created and configured with the ``notehead open'' class.
+Following the \textit{css} definitions, a new SVG circle object is created and configured with the ``notehead open'' class.
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/css : [ {
+ /violin : [{
+    /key : ``css'',
+    /val : [{
       /selector : ".notehead",
       /props : {
           /stroke : "black",
@@ -598,19 +616,23 @@ Following the \textit{/css} definitions, a new SVG circle object is created and 
 	  /fill : "black",
           /r : 5
       }
-  }, {
+    }, {
       /selector : ".notehead.open",
       /props : {
           /fill : "none"
       }
-  }],
-  /violin/svg : {
-      /new : ``circle'',
+    }],
+  }, {
+    /key : ``svg'',
+    /val : {
+       /new : ``circle'',
       /id : ``foo'',
       /class : ``notehead open'',
       /cx : 20,
       /cy : 20
-  }
+    }
+  }]
+
  \end{lstlisting}
 
 
@@ -628,26 +650,30 @@ Within the \drawsocket main SVG element there is element group called \textit{de
 
 For example, the following snippet makes a new SVG group object in the \textit{defs}, called ``noteline'', which contains a line and a circle:
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/svg : {
-      /def : {
-          /new : ``g'',
-          /id : ``noteline'',
-          /child : [{
-              /new : ``line'',
-              /x1 : 10,
-              /y1 : 10,
-              /x2 : 100,
-              /y2 : 10
-         }, {
-            /new : ``circle',
-            /cx : 5,
-            /cy : 5,
-            /r : 5
-        }]
+ /violin : {
+    /key : ``svg'',
+    /val : {
+      /parent : "defs",
+      /new : ``g'',
+      /id : ``noteline'',
+      /child : [{
+          /new : ``line'',
+          /x1 : 10,
+          /y1 : 10,
+          /x2 : 100,
+          /y2 : 10
+       }, {
+        /new : ``circle',
+        /cx : 5,
+        /cy : 5,
+        /r : 5
+      }]
     } 
   }
  \end{lstlisting}
+ \end{minipage}
 
 Typically the user would send a library of definitions at the beginning of the piece, and then refer to the set of definitions as needed via the \textit{use} SVG element and its \textit{href} attribute, creating an internal reference to a given definition selected through its \textit{id} attribute.\footnote{Note that for all selections we are using the HTML/CSS \textit{\#} sign to specify that the following string is an \textit{id}.}
 
@@ -655,13 +681,16 @@ For example, the following new SVG object ``foo'', references the ``noteline'' d
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/svg : {
+ /violin : {
+    /key : ``svg'',
+    /val : {
       /new : ``use'',
       /id : ``foo'',
       /href : ``#noteline'',
       /x : 100,
       /y : 100
    }
+ }
  \end{lstlisting}
 \end{minipage}
 
@@ -669,14 +698,17 @@ For example, the following new SVG object ``foo'', references the ``noteline'' d
 \noindent
 \textbf{Importing fragments.} 
 The \textit{use}-\textit{href} syntax approach can also be used to import elements from external SVG files stored in the public HTML folder, by adding the target object's \textit{id} to the external file path.
-For example, to reference an object with the id ``boo'' in an external file called ``other.svg'' that is located in the public subfolder called ``media'' you could use the following snippet:
+For example, to reference an object with the ID ``boo'' in an external file called ``other.svg'' that is located in the public subfolder called ``media'' you could use the following snippet:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/svg : {
+ /violin : {
+    /key : ``svg'',
+    /val : {
       /new : ``use'',
       /id : ``foo'',
       /href : ``/media/other.svg#boo''
-  }
+   }
+ }
  \end{lstlisting}
 
 If \textit{x} or \textit{y} attributes are set in the \textit{use} node, the referenced object will be offset by the amount specified by the  \textit{use} attributes.
@@ -685,46 +717,54 @@ If \textit{x} or \textit{y} attributes are set in the \textit{use} node, the ref
 
 \subsection{PDF import}\label{sec:pdf}
 PDF files may be imported into \drawsocket.
-For example, to load a PDF, storing it at the \drawsocket id ``foo'', setting its \textit{x} position, \textit{width} and then set it to page 2:
+For example, to load a PDF, storing it at the \drawsocket ID ``foo'', setting its \textit{x} position, \textit{width} and setting it to display page 2:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /*/pdf : {
+  /* : {
+     /key : ``pdf'',
+     /val : {
       /id : "newpdf",
       /href : "/media/flint_piccolo_excerpt.pdf",
       /width : 600,
       /x : 100,
       /page : 2
+    }
   }
  \end{lstlisting}
 
 
 \subsection{Animation}\label{sec:animation}
 While \drawsocket objects may be animated using native CSS transitions and keyframes, the GSAP TweenMax and TimlineMax libraries were introduced to provide a much more convenient and cross-browser supported method.
-With the TweenMax library users can create a ``tween'' transition between the object's current position and current CSS property values, to another set of values over a given amount of time, using the TweenMax.to function via the \textit{/tween} \drawsocket command. For example:
+With the TweenMax library users can create a ``tween'' transition between the object's current position and current CSS property values, to another set of values over a given amount of time, using the TweenMax.to function via the \textit{tween} \drawsocket key. For example:
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
 
-    /violin/tween : {
-        /id : ``aaa'',
-        /target : ``#note'', 
-        /dur : 10,
-        /vars : {
-            /x : 100,
-            /y : 100,
-            /opacity : 0
-        }
+ /violin : {
+    /key : ``tween'',
+    /val : {
+      /id : ``aaa'',
+      /target : ``#note'', 
+      /dur : 10,
+      /vars : {
+        /x : 100,
+        /y : 100,
+        /opacity : 0
+      }
     }
+  }
  \end{lstlisting}
 \noindent
 moves the SVG object ``note'' to the ${x,y}$ positions $\{100,100\}$, and fades the opacity to zero over a course of 10 seconds.
-The \textit{tween} is stored as object in the \drawsocket script at the given id (here ``aaa''), and may be recalled at will (see the online documentation for more details).
-The CSS selector \textit{/target}, \textit{/dur} and \textit{/vars} are plugged directly into the argument fields for the TweenMax.to function.\footnote{https://greensock.com/docs/TweenMax/TweenMax()}
+The \textit{tween} is stored as object in the \drawsocket script at the given ID (here ``aaa''), and may be recalled at will (see the online documentation for more details).
+The CSS selector \textit{target}, \textit{dur} and \textit{vars} are plugged directly into the argument fields for the TweenMax.to function.\footnote{https://greensock.com/docs/TweenMax/TweenMax()}
 
-More complex animations can be implemented with the TimelineMax function, via the \drawsocket \textit{/timeline} command, which is comprised of an array of tweens (which can also have different targets).
+More complex animations can be implemented with the TimelineMax function, via the \drawsocket \textit{timeline} command, which is comprised of an array of tweens (which can also have different targets).
 As with the TweenMax.to function, an effort was made to make the encoding syntax as close to the native GSAP Timeline function as possible so users can refer to the GSAP documentation for full reference.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-  /violin/timeline : {
+ /violin : {
+    /key : ``timeline'',
+    /val : {
       /id : ``foo_line'',
       /init : {
           /paused : "true",
@@ -752,11 +792,12 @@ As with the TweenMax.to function, an effort was made to make the encoding syntax
 	       /ease : "linear"
       	  }
       }]
-  }
+    }
+ }
 \end{lstlisting}
 \end{minipage}
 
-\drawsocket provides the \textit{/cmd} keyword for tweens (and timelines of tweens) to start, stop, reset, reverse, etc.
+\drawsocket provides the \textit{cmd} keyword for tweens (and timelines of tweens) to start, stop, reset, reverse, etc.
 
 \medskip
 \noindent
@@ -768,30 +809,40 @@ The client then checks the duration of the animation (tween or timeline) to make
 
 \subsection{Sound}\label{sec:sound}
 In addition to providing access to browser-based drawing tools, \drawsocket also makes use of the Tone.js~\cite{mann2015interactive} WebAudio\footnote{https://www.w3.org/TR/webaudio/} Framework for browser-based sound production.
-Currently \drawsocket supports only loading and playing sound files, but in the future we may add other features from Tone.js as well.
 
-For example, to load an mp3 file and start looping playback:
+The Tone support library also adds a new keyword, \textit{call} which expects an object containing a \textit{method} and optional \textit{args}. Additionally, a the \textit{call} object may also contain a \textit{then} object which can be used as a sequential \textit{call}, applied to the return value form the parent method call.
 
+For example, he we create a new Tone.Player, load an mp3 file, tell it to start looping playback, and call the \textit{toMaster()} Tone.Player method:
+
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-/*/sound : {
+/* : {
+  /key : ``sound'',
+  /val : {
     /new : "Player",
     /id : "kick",
     /vars : {
         /url : "/media/808_mp3/kick1.mp3",
         /autostart : "true",
         /loop : "true"
+    },
+    /call : {
+      /method : "toMaster"
     }
+  }
 }
 \end{lstlisting}
-
+\end{minipage}
 
 \subsection{HTML5}\label{sec:html}
-\drawsocket provides access to HTML nodes via the \textit{/html} tag. 
+\drawsocket provides access to HTML nodes via the \textit{html} tag. 
 
 For example, this loads a video:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-/*/html : {
+/* : {
+  /key : ``html'',
+  /val : {
     /new : "video",
     /id : "foo",
     /child : {
@@ -799,18 +850,23 @@ For example, this loads a video:
         /type : "video/mp4",
         /src : "somerandommovie.mp4"
     }
+  }
 }
 \end{lstlisting}
 
-HTML5 JS object methods can be called via the \textit{/call} keyword.\footnote{\textit{/tone} objects also support the \textit{/call} keyword.}
+Some HTML5 JS objects also support the \textit{call} keyword.
+
 For example, this starts playing the above video:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-/*/html : {
-    /id : "foo",
+/* : {
+  /key : ``html'',
+  /val : {
+    /id : ``foo'',
     /call : {
-        /play : ""
+        /method : ``play''
     }
+  }
 }
 \end{lstlisting}
 
@@ -820,32 +876,35 @@ For example, this starts playing the above video:
 
 \subsection{User Interaction}\label{sec:interaction}
 Lastly, \drawsocket also sends user interaction information back to the server, outputting the data into Max where it can be used to control other processes, through mouse and multi-touch event listeners, and via HTML textfield input forms.
-When the user's mouse or fingers move over the screen \drawsocket reports the $x,y$ position and the top-most graphic object under the fingers or cursor, and bound with the OSC prefix.\footnote{Currently there is no unique client identifier, all users on the same URL will send their user interaction data via the same OSC prefix. A unique tagging system will likely be implemented at some point.}
+When the user's mouse or fingers move over the screen \drawsocket reports the $x,y$ position and the top-most graphic object under the fingers or cursor, and bound with the URL address.\footnote{Currently there is no unique client identifier, i.e. all users on the same URL will send their user interaction data identified by the same URL address. A unique tagging system will likely be implemented at some point.}
 
 \drawsocket also provides access to HTML text input fields. To create a text field, users first create a form with a default text prompt and then position the form by applying a CSS transform, or tween. When a client enters text into the text input field and hits enter or clicks outside of the form, the text is sent back to the server and output in Max in a similar fashion to mouse and multi-touch data.
 
 \medskip
 \noindent
 \textbf{User defined event callbacks.}
-The client-side \textit{drawsocket} function can also be invoked from a callback, for handling user interaction. For example, the following snippet, which creates an SVG path object, and assigns an \textit{onclick} callback function which triggers a sample playback when the client user clicks on the path object:
+The main client-side processing function can also be invoked from a callback for handling user interaction, exposed to the global JS namespace as \textit{drawsocket.input}. For example, the following snippet, which creates an SVG path object, and assigns an \textit{onclick} callback function which triggers a sample playback when the client user clicks on the path object:
 
 \begin{lstlisting}[ mathescape,columns=fullflexible,basicstyle=\oscfontsize\fontfamily{lmvtt}\selectfont ]
-/*/svg : {
-    /new : "path",
-    /id : "wow",
+/* : {
+  /key : ``svg'',
+  /val : {
+    /new : ``path'',
+    /id : ``wow'',
     /style : {
-        /fill : "red"
+        /fill : ``red''
     },
     /d : "M100,100a30,30,0,0,0,0-60a30,30,0,0,0,0,60",
-    /onclick : "drawsocket({
-        key: 'sound',
+    /onclick : ``drawsocket.input({
+        key: `sound',
         val: {
-            id: 'kick',
+            id: `kick',
             call: { 
-                restart: '' 
+                method: `restart' 
             }
         }
-    })"
+    })''
+  }
 }
 \end{lstlisting}
 
@@ -868,7 +927,7 @@ However, it is possible to block the event loop\cite{node-eventloop} within a ca
 In particular, the JSON.parse and JSON.stringify operations are potentially expensive, with a complexity of $O(n)$; so, depending on the size of the incoming dictionary, this could significantly slow down the response of the server.
 In our testing so far, we have already noticed some issues with processing very large dictionaries arriving from Max, but we need to investigate further.
 It is possible that since the data is broadcasted before being sent to the caching system, that the blocking of the event loop will be less noticeable on the client-side, however, the responsiveness of the server will be reduced and this will likely effect the clock-synchronization routine, and could also in extreme cases result in a buildup of events to process in queue.
-To address this issue, we might look into storing the prefix states in a separate database, which runs as a separate process.
+To address this issue, we might look into storing the URL states in a separate database, which runs as a separate process.
 
 
 \begin{acknowledgments}
