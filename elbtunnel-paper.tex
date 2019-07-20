@@ -56,7 +56,7 @@ One of the difficulties of such a practice is maintaining synchronicity, as the 
 
 In this paper we are describing the musical and technological prerequisites for a project dubbed Symphony for a Tunnel to be realized in Hamburg in May of 2019. The Old Elbe Tunnel is a remarkable landmark in the heart of the Hamburg port. Completed in 1911, it was considered a technological marvel at the time, connecting two neighborhoods below the Elbe river. Featuring two tubes for pedestrians, cyclists and automobiles which are being carried down / up by sizeable lifts to / from the bottom 24m beneath the surface, it is also an extraordinary place for performances. Its Jugendstil half cylinders form a resonant body in which the sound of a single instrument carries over large distances with relatively little decay \footnote{In an experiment featuring a violin playing scales at mezzo forte dynamics, it could be heard at 50m distance as if it was still be played right next to the observer}.
 
-The Stage\_2.0 grant within the Innovative Hochschule initiative of the Federal Ministry of Education and Research in Germany (BMBF) has finally laid the financial foundation for a musical project in the tunnel. The aim is to connect a large number of musicians via a network of connected devices delivering scores on time. We went through a number of scenarios until zooming in on the most practical solution: As the total circular length of the tunnel is about 860 m and an ideal spacing of individual musicians was determined by us to be around 5 to 6 m, it was a most welcome finding that dividing 864 by 6 yielded 144, a highly divisible number with technical and compositional repercussions. For instance, this number allowed us to define identical sub-groups consisting of 12 musicians each or to place 8 access points at regular distances between musicians (Figure). An older, safer idea consisting of tablet computers connected to a wired Ethernet network was abandoned in favor of a Wi-Fi network as it would have required anywhere between 2.5 and 5 km of cables depending on the number of switches involved. 
+The Stage\_2.0 grant within the Innovative Hochschule initiative of the Federal Ministry of Education and Research in Germany (BMBF) has finally laid the financial foundation for a musical project in the tunnel. The aim is to connect a large number of musicians via a network of connected devices delivering scores on time. We went through a number of scenarios until zooming in on the most practical solution: As the total circular length of the tunnel is about 860 m and an ideal spacing of individual musicians was determined by us to be around 5 to 6 m, it was a most welcome finding that dividing 864 by 6 yielded 144, a highly divisible number with technical and compositional repercussions. For instance, this number allowed us to define identical sub-groups consisting of 12 musicians each or to place 8 access points at regular distances between musicians (see Figure \ref{fig:Elbtunnel_GrundrissVers2}). An older, safer idea consisting of tablet computers connected to a wired Ethernet network was abandoned in favor of a Wi-Fi network as it would have required anywhere between 2.5 and 5 km of cables depending on the number of switches involved. 
 Another serendipitous finding was that when Rama Gottfried joined the Stage\_2.0 project in 2018, he had already been working on a node.js-based system for the Berlin Ensemble Mosaik and possessed the expertise to take on a project that would also take advantage of Cycling ’74’s recent effort to integrate node.js into their Max multimedia authoring environment.
 
 
@@ -122,6 +122,9 @@ As mentioned in section~\ref{sec:foundations}., MaxScore possesses a fair amount
 
 In addition to splitting and routing messages, the object is also capable of respacing staves so that resulting layout looks acceptable. It does so by querying the MaxScore object during rendering to obtain crucial information about staff spacing and using this information to apply offsets to the y values of each message to be rendered.
 
+
+
+
 \begin{figure}[h]
 \centering
 \begin{lstlisting}[ mathescape,
@@ -152,16 +155,27 @@ Figure \ref{fig:maxscore-mesages} shows a sample of rendering messages generated
 
 render2Browser.js is also capable of animating any number of cursors moving across set of measures and staves (see TENOR 2018 paper).
 
+\begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.4\textwidth]{Tenor-Paper-8.jpg} 
+       	\caption{Excerpt from Raindrops Keep Falling (2018) for clarinet, cello, drum set and multimedia.
+\label{fig:Tenor-Paper-8}}
+\end{figure}
+
+
 \begin{figure*}[h]
-    \centering
-    \begin{minipage}{1.\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{Elbtunnel_GrundrissVers2.png} 
+       	\caption{Cross section and top view of the Old Elbe Tunnel. Eight access points will be spaced at regular distances, each providing coverage for 18 players.
+\label{fig:Elbtunnel_GrundrissVers2}}
+\end{figure*}
+
+\begin{figure*}[h]
         \centering
         \includegraphics[width=1\textwidth]{Tenor-Paper.png} 
        	\caption{A MaxScore score with 4 staves (top) rendered dynamically in four browser windows (center and bottom). The staves are split and grouped by render2Browser.js according to the following staffgroup settings: 0 1-2 2 0+3.
 \label{fig:Tenor-Paper}}
-    \end{minipage}
 \end{figure*}
-
 
 To scroll the entire score horizontally, we created another JavaScript object called maxscore.proportionalNotation.js. It toggles between MaxScore’s default score layout and its proportional representation by hiding rests, stems, beams and naturals and indicating the duration of a note by a line extending from a note. The length of a measure is calculated by obtaining its tempo and time signature values and taking a setTimeUnit attribute into consideration. The durational scaling base value of 0.385 has proven to be optimal for spatially representing the delta time between events. The start message will cause a playhead to appear at the position given by the scoreLeftMargin attribute and instruct the browser to scroll the score. We are planning to also support scores created for the Decibel ScorePlayer in the future. 
 
@@ -174,15 +188,8 @@ Each of the 144 performers will have a iPad mounted on a music stand, connected 
 
 There will be 4 concerts on two days with pieces written by established composers as well as HfMT multimedia students. The tunnel will be blocked off for the general public and the audience will be allowed to freely move around during the performance.
 
-\begin{figure*}[h]
-    \centering
-    \begin{minipage}{1.\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{Elbtunnel_GrundrissVers1.jpg} 
-       	\caption{Cross section and top view of the Old Elbe Tunnel. Eight access points will be spaced at regular distances, each providing coverage for 18 players.
-\label{fig:Elbtunnel_GrundrissVers1.jpg}}
-    \end{minipage}
-\end{figure*}
+
+
 
 
 \section{Case study}
@@ -190,15 +197,6 @@ There will be 4 concerts on two days with pieces written by established composer
 A performance  at the December 2018 WOCMAT conference in Hsinchu, Taiwan posed an excellent opportunity to test drive the software at its current state.
 A new piece (Raindrops Keep Falling) by Georg Hajdu for clarinet, cello and percussion with multimedia consists of a transition between various rain samples and a late-1960’s hit called Raindrops Keep Fallin' On My Head mediated by a Max Pluggo effect called Raindrops. \footnote{It’s also a tongue-in-cheek reference to the usual end-of-year weather pattern in Taiwan.} The piece features 12 different versions of the song found on the Internet. The HfMT graduate student and research assistant James Cheung arranged the songs in such manner that they all share the same tempo structure and key signature, allowing the seamless navigation between those versions. James also created an arrangement of the song for the aforementioned instrumentation to be performed simultaneously with the recording, which was further subject to processing. First, parts of the score were “whited out” by a probabilistic process so that more and more events were allowed to appear paralleling a similar process applied to the audio tracks. The whiting-out was achieved by a JavaScript object called maxscore.whiteout.js capable of applying a “whiteout” gradient to a given section (the name was inspired by Cat Hope’s piece The Great White). Second, the score was turned into proportional notation, transmitted to the iPads of the performers via hfmt.drawsocket and scrolled in synch with the audio. The system held up to its promise as a computer-based conducting system. The scrolling was fluid and the musicians stayed in tempo despite the tempo fluctuations in the audio track. 
 
-\begin{figure*}[h]
-    \centering
-    \begin{minipage}{0.6\textwidth}
-        \centering
-        \includegraphics[width=1\textwidth]{Tenor-Paper-8.jpg} 
-       	\caption{Excerpt from Raindrops Keep Falling (2018) for clarinet, cello, drum set and multimedia.
-\label{fig:Tenor-Paper-8}}
-    \end{minipage}
-\end{figure*}
 
 
 
@@ -206,7 +204,7 @@ A new piece (Raindrops Keep Falling) by Georg Hajdu for clarinet, cello and perc
 \section{Future Work}
 We expect the Old Elbe Tunnel to be a test bed for situative performances of orchestral dimensions. This project will be further developed according to the following criteria: 
 1. The situative aspect: The system can be scaled to other outdoors and indoors settings with unique topologies. Once the system has proven its robustness, we will  most likely see more real-time and interactive uses.
-2. The assistive aspect: Allowing semi-professional and amateur musicians to participate in large-scale events with little prior orchestra experience. A transcription of Ligeti's Atmospheres into proportional notation, for instance, could leverage some of the difficulties reading the complex notation in rehearsals and concerts. The networked notation tool SmartVox by Jonathan Bell and Benjamin Matuszewski has already yielded excellent results working with amateur and student choirs. Cat Hope's opera Speechless is another case where a networked notation tool (Decibel Score Player) has been used in large scale performance.
+2. The assistive aspect: Allowing semi-professional and amateur musicians to participate in large-scale events with little prior orchestra experience. A transcription of Ligeti's Atmospheres into proportional notation, for instance, could leverage some of the difficulties reading the complex notation in rehearsals and concerts. The networked notation tool SmartVox by Jonathan Bell and Benjamin Matuszewski \cite{bell2017smartvox} has already yielded excellent results working with amateur and student choirs. Cat Hope's opera Speechless is another case where a networked notation tool (Decibel Score Player) has been used in large scale performance.
 
 \begin{acknowledgments}
 The authors would like to thank James Cheung for their detailed testing the system which pushed the development of many new features and design considerations. We would also like to acknowledge the Federal Ministry of Education and Research in Germany (BMBF), for their support of this research through the Innovative Hochschule: Stage\_2.0 initiative.
